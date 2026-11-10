@@ -5,120 +5,129 @@
 export const profile = {
   name: 'Steven Lim',
   initials: 'SL',
-  role: '[Your role]',
+  role: 'Information Technology',
   school: 'Politeknik Caltex Riau',
-  location: 'Riau, Indonesia',
+  location: 'Pekanbaru, Indonesia',
   timezone: 'Asia/Jakarta',
   status: 'Open to work',
-  lead: 'I build web apps and AI agents that get used for real work.',
-  leadExtra: '[Replace with one sentence about your focus.]',
-  heroTags: ['Web development', 'AI agent', 'AWS'],
-  email: '[your-email@gmail.com]',
+  lead: 'I build full-stack web apps with Laravel and React, backed by a solid grounding in networking.',
+  leadExtra: 'Now a Technical Support Engineer at Apical, and exploring generative AI.',
+  heroTags: ['Full-stack web', 'Laravel · React', 'Networking', 'Generative AI'],
+  email: 'achensteven2005@gmail.com',
   linkedin: 'https://www.linkedin.com/in/steven-lim-22b6ba2b2',
-  github: 'https://github.com/',
-  availability: 'Open to internships, jobs, and freelance projects. I usually reply within a day.',
+  github: 'https://github.com/StevenTI1191',
+  languages: ['English (professional working)', 'Indonesian (native)', 'Chinese (full professional)'],
+  availability: 'Open to roles in software engineering and machine learning, plus freelance web projects. I usually reply within a day.',
 };
 
-// color: one of 'c1' blue, 'c2' purple, 'c3' green, 'c4' orange
+// color: 'c1' blue, 'c2' purple, 'c3' green, 'c4' orange
 // mock: 'laptop' | 'phone' | 'doc' (shown inside "View details")
-// screenshot: optional path in /public, e.g. '/projects/inventory.png' (replaces the mock)
+// screenshot: optional path in /public, e.g. '/projects/erp.png' (replaces the mock)
+// stat and github are optional; leave them out to hide them
 export const projects = [
   {
-    id: 'inventory',
+    id: 'laksamana-erp',
     color: 'c1',
-    tag: 'Web app · Internship',
-    meta: '2026 · Team build',
-    title: 'Inventory System',
-    summary: 'Stock tracking for PT Sari Dumai Sejati',
-    points: ['Incoming and outgoing goods logged', 'Stock checks without paper records', 'Built with the intern team'],
-    stat: { value: '[N]', label: '[Items tracked in the system]' },
-    problem: '[What was hard before this system, e.g. stock was recorded by hand.]',
+    tag: 'Web app · ERP',
+    meta: 'Jul – Aug 2026 · Laksamana Group',
+    title: 'Laksamana Office',
+    summary: 'An internal ERP-style system that runs day-to-day work for Laksamana Group',
+    points: ['REST APIs with PHP and MySQL', 'Role-based access control', 'CI/CD deploys to cPanel hosting'],
+    stat: { value: '13+', label: 'Business modules in one system' },
+    problem: 'The group needed one internal system to handle work across many business areas, with data shared between them.',
     mechanismLabel: 'Mechanism',
-    mechanism: '[Stack, e.g. Laravel + MySQL; goods in and out are logged automatically.]',
+    mechanism: 'PHP and MySQL REST APIs behind interactive frontends, role-based access control, cross-module data integration, and an automated CI/CD pipeline to cPanel shared hosting.',
     mock: 'laptop',
     screenshot: '',
-    github: 'https://github.com/',
+    github: '',
   },
   {
-    id: 'ai-agent',
+    id: 'laksamana-ticketing',
     color: 'c2',
-    tag: 'AI agent · AWS',
-    meta: '2026 · Solo build',
-    title: '[AI project name]',
-    summary: '[One sentence: what this agent does]',
-    points: ['Answers from your own documents', 'Cites its sources', 'Runs on AWS free credits'],
-    stat: { value: '[N]', label: '[Documents it can read]' },
-    problem: '[Questions whose answers are scattered across many documents.]',
+    tag: 'Event system · Team lead',
+    meta: 'Jul – Oct 2025 · Laksamana Group',
+    title: 'E-Ticketing and Registration',
+    summary: 'Automated ticketing and seat selection for event registration',
+    points: ['Automated e-ticketing workflow', 'Seat selection system', 'Led the ticketing and registration team'],
+    problem: 'Event registration needed to be quicker and easier for attendees.',
     mechanismLabel: 'Mechanism',
-    mechanism: '[The agent reads documents, finds the relevant parts, then answers with sources.]',
+    mechanism: 'Automated e-ticketing workflows paired with an interactive seat selection system. [Add the stack you used.]',
     mock: 'phone',
     screenshot: '',
-    github: 'https://github.com/',
+    github: '',
   },
   {
-    id: 'final-project',
+    id: 'powerplant-inventory',
     color: 'c3',
-    tag: 'Research · Final project',
-    meta: 'Politeknik Caltex Riau',
-    title: '[Final project title]',
-    summary: 'Being prepared as a journal article',
-    points: ['[Main method]', '[Data used]', 'Turned into a journal article'],
-    stat: { value: '[N]', label: '[Key result]' },
-    problem: '[Background of the final project.]',
-    mechanismLabel: 'Result',
-    mechanism: '[Main result and the method used.]',
+    tag: 'Web app · Internship',
+    meta: '2026 · Apical, Dumai',
+    title: 'Power Plant Inventory',
+    summary: '[One sentence: what this inventory system does]',
+    points: ['Built during the internship at Apical', '[Key feature]', '[Key feature]'],
+    problem: '[What was hard before this system existed.]',
+    mechanismLabel: 'Mechanism',
+    mechanism: '[Stack and how it works.]',
     mock: 'doc',
     screenshot: '',
-    github: 'https://github.com/',
+    github: '',
   },
 ];
 
 export const marquee = {
-  top: ['Python', 'JavaScript', 'SQL', 'AWS', 'LLM'],
-  bottom: ['AI agent', 'Git', 'Linux', 'React'],
+  top: ['Laravel', 'React.js', 'PHP', 'MySQL', 'REST API'],
+  bottom: ['AWS', 'Generative AI', 'MikroTik', 'Cisco', 'CI/CD'],
 };
 
-// icon: 'code' | 'cloud' | 'web'
+// icon: 'code' | 'cloud' | 'web' | 'network' | 'globe'
 export const toolGroups = [
-  { title: 'Languages', icon: 'code', text: 'What I use every day for logic and data.', items: ['Python', 'JavaScript', 'SQL'] },
-  { title: 'AI and cloud', icon: 'cloud', text: 'Building agents that run in the cloud at zero cost.', items: ['LLM', 'AI agent', 'AWS'] },
-  { title: 'Web and data', icon: 'web', text: 'Web apps for real needs, like an inventory system.', items: ['React', '[Database]', 'Git'] },
+  { title: 'Web development', icon: 'web', text: 'Full-stack apps, from database to interface.', items: ['Laravel', 'React.js', 'PHP', 'MySQL', 'REST API'] },
+  { title: 'Networking', icon: 'network', text: 'Configuring and running network infrastructure.', items: ['MikroTik', 'Cisco routing', 'Switching', 'Network admin'] },
+  { title: 'Cloud and AI', icon: 'cloud', text: 'Deploying apps and building with generative AI.', items: ['AWS', 'Generative AI', 'Claude', 'CI/CD'] },
+  { title: 'Languages I speak', icon: 'globe', text: 'Comfortable working across three languages.', items: ['English', 'Indonesian', 'Chinese'] },
 ];
 
-// category: 'cloud' | 'ai' | 'web' (used by the filter tabs)
+// category must match one of the badgeFilters ids
 // image: put your badge file in /public/badges and write '/badges/your-file.png'.
 //        Leave empty to show a generated placeholder shape.
 // shape: 'hex' | 'circle' | 'shield' | 'diamond' (placeholder only)
 export const badges = [
-  { name: '[Cloud badge name]', issuer: '[Issuer]', year: '[Year]', category: 'cloud', link: 'https://www.credly.com/', image: '', shape: 'hex', color: '#EA580C', short: 'CLOUD' },
-  { name: '[AI badge name]', issuer: '[Issuer]', year: '[Year]', category: 'ai', link: 'https://www.credly.com/', image: '', shape: 'circle', color: '#7C3AED', short: 'AI' },
-  { name: '[Web certificate name]', issuer: '[Issuer]', year: '[Year]', category: 'web', link: 'https://www.credly.com/', image: '', shape: 'shield', color: '#2563EB', short: 'WEB' },
-  { name: '[Another badge name]', issuer: '[Issuer]', year: '[Year]', category: 'cloud', link: 'https://www.credly.com/', image: '', shape: 'diamond', color: '#16A34A', short: 'AWS' },
+  { name: 'AWS SimuLearn: AI Practitioner Badge', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '', shape: 'hex', color: '#EA580C', short: 'AWS' },
+  { name: 'Oracle Agentic AI Foundation Associate', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
+  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
+  { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
+  { name: 'Junior Network Administrator', issuer: '[Issuer]', year: '[Year]', category: 'network', link: '', image: '', shape: 'shield', color: '#0F766E', short: 'JNA' },
+  { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '', shape: 'shield', color: '#DC2626', short: 'EHE' },
+  { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: '[Year]', category: 'ai', link: '', image: '', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
 ];
 
 export const badgeFilters = [
   { id: 'all', label: 'All' },
   { id: 'cloud', label: 'Cloud' },
+  { id: 'network', label: 'Networking' },
+  { id: 'security', label: 'Security' },
   { id: 'ai', label: 'AI' },
-  { id: 'web', label: 'Web' },
 ];
 
 export const experience = [
-  { now: true, when: '[Month 2026] – present', title: 'Intern · PT Sari Dumai Sejati', text: 'Building an inventory system with the team. [Add one key contribution.]' },
-  { when: '[Year] – present', title: 'Final project', text: 'Turning the research results into a journal article.' },
-  { when: '[Start year] – [graduation]', title: 'Student · Politeknik Caltex Riau', text: '[Study program.]' },
+  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', text: 'Kota Dumai, Riau. [Add your main responsibility.]' },
+  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', text: 'Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
+  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', text: 'Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
+  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', text: 'Developed automated e-ticketing workflows and a seat selection system.' },
+  { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', text: 'Bachelor of Applied Science, Information Technology.' },
 ];
 
 // Robo: quick questions and the offline answers used when the AI is unavailable
 export const robo = {
   greeting: "Hi! I'm Robo, Steven's assistant. Ask me anything about him.",
-  intro: 'Hello! This is Steven Lim, a student at Politeknik Caltex Riau. He builds web apps and AI agents. Scroll down to see his projects.',
+  intro: 'Hello! This is Steven Lim, an Information Technology student at Politeknik Caltex Riau. He builds full-stack web apps with Laravel and React, and he knows networking too. Scroll down to see his work.',
   poke: "Hey, that tickles! I'm Robo, Steven's assistant. Nice to meet you!",
   quick: [
-    { q: 'What does Steven do?', a: 'Steven is a student at Politeknik Caltex Riau who builds web apps and AI agents. He is currently interning at PT Sari Dumai Sejati.' },
-    { q: 'Tell me about his projects', a: 'He built an inventory system during his internship, an AI agent that answers from documents, and a final project that is becoming a journal article.' },
-    { q: 'What are his skills?', a: 'Python, JavaScript, SQL, React, AWS, and building AI agents with large language models.' },
-    { q: 'How can I contact him?', a: 'Scroll to the contact section to copy his email, or reach him on LinkedIn.' },
+    { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau and a Technical Support Engineer at Apical. Before that, he built web systems for Laksamana Group.' },
+    { q: 'Tell me about his projects', a: 'He built an internal ERP-style system with 13 plus business modules and an e-ticketing system with seat selection for Laksamana Group, plus an inventory web app at Apical.' },
+    { q: 'What are his skills?', a: 'Laravel, React, PHP, MySQL and REST APIs for the web, networking with MikroTik and Cisco, and AWS and generative AI.' },
+    { q: 'How can I contact him?', a: 'Email him at achensteven2005@gmail.com, or reach him on LinkedIn. The contact section has both.' },
+    { q: 'What languages does he speak?', a: 'Steven speaks English, Indonesian, and Chinese.' },
+    { q: 'Any certifications?', a: 'Yes. He holds the AWS SimuLearn AI Practitioner badge, Oracle Agentic AI Foundation Associate, CCNA, MikroTik MTCNA, Ethical Hacking Essentials, and more on the badge shelf.' },
   ],
   fallback: "I can't reach my AI brain right now, but you can tap one of the quick questions, or check the sections below.",
 };
@@ -127,12 +136,13 @@ export const robo = {
 export function buildKnowledge() {
   const p = profile;
   const lines = [
-    `Name: ${p.name}. Role: ${p.role}. School: ${p.school}. Location: ${p.location}. Status: ${p.status}.`,
-    `About: ${p.lead}`,
+    `Name: ${p.name}. Studying ${p.role} at ${p.school}. Location: ${p.location}. Status: ${p.status}.`,
+    `About: ${p.lead} ${p.leadExtra}`,
+    `Spoken languages: ${p.languages.join(', ')}.`,
     'Projects:',
-    ...projects.map((x) => `- ${x.title} (${x.tag}, ${x.meta}): ${x.summary}. Highlights: ${x.points.join('; ')}. Problem: ${x.problem} ${x.mechanismLabel}: ${x.mechanism}`),
+    ...projects.map((x) => `- ${x.title} (${x.tag}, ${x.meta}): ${x.summary}. Highlights: ${x.points.join('; ')}.${x.stat ? ` ${x.stat.value} ${x.stat.label}.` : ''} Problem: ${x.problem} ${x.mechanismLabel}: ${x.mechanism}`),
     `Skills: ${toolGroups.map((g) => `${g.title}: ${g.items.join(', ')}`).join('. ')}.`,
-    `Certifications: ${badges.map((b) => `${b.name} by ${b.issuer} (${b.year})`).join('; ')}.`,
+    `Certifications: ${badges.map((b) => `${b.name} from ${b.issuer}${b.year && !b.year.startsWith('[') ? ` (${b.year})` : ''}`).join('; ')}.`,
     `Experience: ${experience.map((e) => `${e.title} (${e.when}): ${e.text}`).join(' | ')}`,
     `Contact: email ${p.email}, LinkedIn ${p.linkedin}, GitHub ${p.github}. ${p.availability}`,
   ];

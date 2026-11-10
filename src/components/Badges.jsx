@@ -61,9 +61,11 @@ function Lightbox({ badge, onClose }) {
           {badge.issuer} · {badge.year}
         </p>
         <div className="row" style={{ justifyContent: 'center' }}>
-          <Button primary small href={badge.link}>
-            View credential ↗
-          </Button>
+          {badge.link && (
+            <Button primary small href={badge.link}>
+              View credential ↗
+            </Button>
+          )}
           <button ref={closeRef} className="btn sm" type="button" onClick={onClose}>
             Close
           </button>
@@ -119,7 +121,7 @@ export default function Badges() {
             </span>
             <span className="bmeta">
               <span className="bkind" style={{ background: b.color }}>
-                {b.category === 'ai' ? 'AI' : b.category[0].toUpperCase() + b.category.slice(1)}
+                {badgeFilters.find((f) => f.id === b.category)?.label || b.category}
               </span>
               <b>{b.name}</b>
               <span>

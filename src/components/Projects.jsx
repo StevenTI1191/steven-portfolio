@@ -19,17 +19,21 @@ function ProjectCard({ p, open, onToggle, cardRef }) {
           <li key={pt}>{pt}</li>
         ))}
       </ul>
-      <div className="stat">
-        <b>{p.stat.value}</b>
-        <span>{p.stat.label}</span>
-      </div>
+      {p.stat && (
+        <div className="stat">
+          <b>{p.stat.value}</b>
+          <span>{p.stat.label}</span>
+        </div>
+      )}
       <div className="acts">
         <Button primary small aria-expanded={open} onClick={onToggle}>
           {open ? 'Hide details ↑' : 'View details ↓'}
         </Button>
-        <Button small href={p.github}>
-          GitHub ↗
-        </Button>
+        {p.github && (
+          <Button small href={p.github}>
+            GitHub ↗
+          </Button>
+        )}
       </div>
       {open && (
         <div className="more-body">
