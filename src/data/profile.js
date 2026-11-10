@@ -98,7 +98,7 @@ export const badges = [
   { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
   { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
   { name: 'Junior Network Administrator', issuer: '[Issuer]', year: '[Year]', category: 'network', link: '', image: '', shape: 'shield', color: '#0F766E', short: 'JNA' },
-  { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '', shape: 'shield', color: '#DC2626', short: 'EHE' },
+  { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '/badges/ec-council-ehe.png', shape: 'shield', color: '#DC2626', short: 'EHE' },
   { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: '[Year]', category: 'ai', link: '', image: '', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
 ];
 
