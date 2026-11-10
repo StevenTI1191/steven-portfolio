@@ -11,10 +11,16 @@ src/
   components/Robo.jsx    ← Robo's speech bubble + chat
   components/robotScene.js ← the 3D robot (Three.js)
   styles.css
-functions/api/chat.js    ← Cloudflare Pages Function: POST /api/chat → Workers AI
+functions/api/chat.js    ← chat handler: POST /api/chat → Workers AI
+worker/index.js          ← Cloudflare Worker: serves the site + routes /api/chat
 public/badges/           ← put your badge images here
-wrangler.toml            ← Cloudflare config (AI binding)
+wrangler.toml            ← Cloudflare Workers config (static assets + AI binding)
 ```
+
+**Deploying:** this repo deploys as a Cloudflare **Worker** with static assets.
+In Workers & Pages → Create → Import a repository, use build command `npm run build`
+and deploy command `npx wrangler deploy`. Add the domain under the Worker's
+**Settings → Domains & Routes**. The sections below that mention Pages are an older option.
 
 ## 1. Run it on your laptop
 
