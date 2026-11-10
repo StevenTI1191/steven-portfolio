@@ -93,7 +93,7 @@ export const toolGroups = [
 //        Leave empty to show a generated placeholder shape.
 // shape: 'hex' | 'circle' | 'shield' | 'diamond' (placeholder only)
 export const badges = [
-  { name: 'AWS SimuLearn: AI Practitioner Badge', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '', shape: 'hex', color: '#EA580C', short: 'AWS' },
+  { name: 'AWS SimuLearn: AI Practitioner', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '/badges/aws-simulearn-ai-practitioner.png', shape: 'hex', color: '#EA580C', short: 'AWS' },
   { name: 'Oracle Agentic AI Foundation Associate', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
   { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
   { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
