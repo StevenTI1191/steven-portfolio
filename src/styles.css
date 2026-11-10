@@ -280,6 +280,20 @@ footer{display:flex;flex-direction:column;gap:14px;padding-top:8px}
 @media (hover:none){.claim:hover{transform:none}}
 
 /* React additions */
+.contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:6px}
+.contact-card{display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:22px;background:#1C1C1A;border:1.5px solid #3A3A36;color:var(--paper);text-decoration:none;min-width:0;transition:border-color .25s,transform .25s var(--ease),background .25s}
+.contact-card:hover{border-color:var(--paper);transform:translateY(-4px);background:#232320}
+a.contact-card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.contact-ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--paper);color:var(--ink);transition:transform .4s var(--ease),background .25s,color .25s}
+.contact-card:hover .contact-ico{transform:rotate(-8deg) scale(1.05);background:var(--accent);color:#fff}
+.contact-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.contact-txt b{font:600 18px var(--display)}
+.contact-txt span{font:500 13px var(--mono);color:#B9B9B2;overflow-wrap:anywhere}
+.contact-acts{display:flex;gap:8px;margin-top:auto}
+.contact-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #5A5A55;background:transparent;color:var(--paper);font:500 13px var(--mono);text-decoration:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.contact-btn:hover,.contact-card:hover span.contact-btn{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.contact-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:760px){.contact-grid{grid-template-columns:minmax(0,1fr)}}
 .site-footer{display:flex;flex-direction:column;gap:28px;padding-top:36px;border-top:2px solid var(--ink)}
 .foot-grid{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:32px 24px}
 .foot-brand{display:flex;flex-direction:column;gap:14px;min-width:0}

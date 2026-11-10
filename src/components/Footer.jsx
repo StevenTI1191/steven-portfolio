@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { profile } from '../data/profile.js';
+import { GitHubIcon, LinkedInIcon, MailIcon } from './icons.jsx';
 
 function localTime() {
   try {
@@ -8,28 +9,6 @@ function localTime() {
     return '--:--';
   }
 }
-
-const icon = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
-
-const ICONS = {
-  github: (
-    <svg {...icon}>
-      <path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" />
-    </svg>
-  ),
-  linkedin: (
-    <svg {...icon}>
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 014 0v4M12 10v7" />
-    </svg>
-  ),
-  mail: (
-    <svg {...icon}>
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="M3 7l9 6 9-6" />
-    </svg>
-  ),
-};
 
 const NAV = [
   { href: '#exp', label: 'Experience' },
@@ -63,9 +42,9 @@ export default function Footer() {
           </a>
           <p>Full-stack web developer and Information Technology student at {profile.school}.</p>
           <div className="foot-icons">
-            <a href={profile.github} target="_blank" rel="noopener" aria-label="GitHub">{ICONS.github}</a>
-            <a href={profile.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn">{ICONS.linkedin}</a>
-            <a href={`mailto:${profile.email}`} aria-label="Email">{ICONS.mail}</a>
+            <a href={profile.github} target="_blank" rel="noopener" aria-label="GitHub"><GitHubIcon /></a>
+            <a href={profile.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><LinkedInIcon /></a>
+            <a href={`mailto:${profile.email}`} aria-label="Email"><MailIcon /></a>
           </div>
         </div>
 
