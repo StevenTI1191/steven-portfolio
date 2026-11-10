@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { badges, badgeFilters } from '../data/profile.js';
 import Button from './Button.jsx';
 
+// "Issuer · Year", skipping any value still left as a [placeholder]
+function metaLine(b) {
+  return [b.issuer, b.year].filter((v) => v && !v.startsWith('[')).join(' · ');
+}
+
 function BadgeArt({ b }) {
   if (b.image) return <img src={b.image} alt="" />;
   const ring = { fill: 'none', stroke: '#fff', strokeOpacity: 0.5, strokeWidth: 2 };
@@ -57,9 +62,7 @@ function Lightbox({ badge, onClose }) {
           <BadgeArt b={badge} />
         </div>
         <h3 id="lbTitle">{badge.name}</h3>
-        <p>
-          {badge.issuer} · {badge.year}
-        </p>
+        <p>{metaLine(badge)}</p>
         <div className="row" style={{ justifyContent: 'center' }}>
           {badge.link && (
             <Button primary small href={badge.link}>
@@ -79,7 +82,11 @@ export default function Badges() {
   const [filter, setFilter] = useState('all');
   const [selected, setSelected] = useState(null);
   const lastRef = useRef(null);
+  // Highlights: only certifications that have a badge image
+  const featured = badges.filter((b) => b.image);
+  // Full list: every certification, filtered by the tabs
   const shown = badges.filter((b) => filter === 'all' || b.category === filter);
+  const kindLabel = (b) => badgeFilters.find((f) => f.id === b.category)?.label || b.category;
 
   const close = () => {
     setSelected(null);
@@ -90,25 +97,20 @@ export default function Badges() {
     <section id="cert" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div className="cert-head rv">
         <div className="sec-head">
-          <p className="label">Certifications and badges</p>
-          <h2>Badge shelf</h2>
+          <p className="label">Certifications</p>
+          <h2>Licenses &amp; certifications</h2>
         </div>
         <span className="count">
-          {shown.length} {shown.length === 1 ? 'badge' : 'badges'}
+          {badges.length} {badges.length === 1 ? 'certification' : 'certifications'}
         </span>
       </div>
-      <div className="tabs rv" role="group" aria-label="Filter badges">
-        {badgeFilters.map((f) => (
-          <button key={f.id} className="tab" type="button" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
-            {f.label}
-          </button>
-        ))}
-      </div>
-      <div className="shelf">
-        {shown.map((b, i) => (
+
+      {featured.length > 0 && <p className="label rv">Highlights</p>}
+      {featured.length > 0 && <div className="shelf">
+        {featured.map((b, i) => (
           <button
-            key={b.name + filter}
-            className="badge dz rv in pop-in"
+            key={b.name}
+            className="badge dz rv"
             style={{ animationDelay: `${i * 0.06}s` }}
             type="button"
             onClick={(e) => {
@@ -120,16 +122,57 @@ export default function Badges() {
               <BadgeArt b={b} />
             </span>
             <span className="bmeta">
-              <span className="bkind" style={{ background: b.color }}>
-                {badgeFilters.find((f) => f.id === b.category)?.label || b.category}
-              </span>
+              <span className="bkind" style={{ background: b.color }}>{kindLabel(b)}</span>
               <b>{b.name}</b>
-              <span>
-                {b.issuer} · {b.year}
-              </span>
+              <span>{metaLine(b)}</span>
             </span>
           </button>
         ))}
+      </div>}
+
+      <div className="cert-list dz rv">
+        <div className="cert-list-head">
+          <p className="label">All certifications</p>
+          <div className="tabs" role="group" aria-label="Filter certifications">
+            {badgeFilters.map((f) => (
+              <button key={f.id} className="tab" type="button" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {shown.length === 0 ? (
+          <p className="cert-empty">No certifications in this category yet.</p>
+        ) : (
+          <ul>
+            {shown.map((b, i) => {
+              const body = (
+                <>
+                  {b.image ? (
+                    <img className="cert-thumb" src={b.image} alt="" />
+                  ) : (
+                    <span className="cert-dot" style={{ background: b.color }} aria-hidden="true">{b.short}</span>
+                  )}
+                  <span className="cert-txt">
+                    <b>{b.name}</b>
+                    <span>{metaLine(b)}</span>
+                  </span>
+                  <span className="cert-kind">{kindLabel(b)}</span>
+                  {b.link && <span className="cert-go" aria-hidden="true">↗</span>}
+                </>
+              );
+              return (
+                <li key={b.name + filter} className="pop-in" style={{ animationDelay: `${i * 0.05}s` }}>
+                  {b.link ? (
+                    <a className="cert-row" href={b.link} target="_blank" rel="noopener">{body}</a>
+                  ) : (
+                    <div className="cert-row">{body}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
       {selected && <Lightbox badge={selected} onClose={close} />}
     </section>
