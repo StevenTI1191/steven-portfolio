@@ -121,7 +121,7 @@ export const badges = [
   { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: 'Oct 2026', category: 'ai', link: '', image: '', logo: '/logos/anthropic.png', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
   { name: 'Technical Support Fundamentals', issuer: 'Google', year: 'May 2026', category: 'other', link: '', image: '', logo: '/logos/google.png', shape: 'circle', color: '#4285F4', short: 'G' },
   { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '/badges/ec-council-ehe.png', shape: 'shield', color: '#DC2626', short: 'EHE' },
-  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
+  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/cisco.png', shape: 'hex', color: '#2563EB', short: 'CCNA' },
   { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/mikrotik.png', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
   { name: 'Junior Network Administrator', issuer: 'BNSP', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/bnsp.png', shape: 'shield', color: '#0F766E', short: 'JNA' },
 ];

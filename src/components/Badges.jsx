@@ -122,7 +122,7 @@ export default function Badges() {
               <BadgeArt b={b} />
             </span>
             <span className="bmeta">
-              <span className="bkind" style={{ background: b.color }}>{kindLabel(b)}</span>
+              <span className="bkind">{kindLabel(b)}</span>
               <b>{b.name}</b>
               <span>{metaLine(b)}</span>
             </span>
@@ -151,7 +151,7 @@ export default function Badges() {
                   {b.image || b.logo ? (
                     <img className={`cert-thumb${b.image ? '' : ' is-logo'}`} src={b.image || b.logo} alt="" />
                   ) : (
-                    <span className="cert-dot" style={{ background: b.color }} aria-hidden="true">{b.short}</span>
+                    <span className="cert-dot" aria-hidden="true">{b.short}</span>
                   )}
                   <span className="cert-txt">
                     <b>{b.name}</b>
