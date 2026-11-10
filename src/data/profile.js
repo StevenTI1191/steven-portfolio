@@ -16,6 +16,8 @@ export const profile = {
   email: 'achensteven2005@gmail.com',
   linkedin: 'https://www.linkedin.com/in/steven-lim-22b6ba2b2',
   github: 'https://github.com/StevenTI1191',
+  // Put your CV in /public and point to it here (replace the file to update it)
+  cv: '/Steven-Lim-CV.pdf',
   languages: ['English (professional working)', 'Indonesian (native)', 'Chinese (full professional)'],
   availability: 'Open to roles in software engineering and machine learning, plus freelance web projects. I usually reply within a day.',
 };
