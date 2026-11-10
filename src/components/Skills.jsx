@@ -1,4 +1,5 @@
 import { marquee, toolGroups } from '../data/profile.js';
+import SkillSphere from './SkillSphere.jsx';
 
 const ICONS = {
   code: <path d="M8 7l-5 5 5 5M16 7l5 5-5 5" />,
@@ -25,30 +26,23 @@ const ICONS = {
   ),
 };
 
-function Row({ items, reverse }) {
-  // Doubled so the loop is seamless
-  const all = [...items, ...items];
-  return (
-    <div className={`mq-row${reverse ? ' rev' : ''}`} aria-hidden="true">
-      {all.map((t, i) => (
-        <span key={i}>{t}</span>
-      ))}
-    </div>
-  );
-}
+// Every technical skill once, for the sphere (spoken languages stay in their own card)
+const SPHERE_ITEMS = [
+  ...new Set([
+    ...marquee.top,
+    ...marquee.bottom,
+    ...toolGroups.filter((g) => g.icon !== 'globe').flatMap((g) => g.items),
+  ]),
+];
 
 export default function Skills() {
-  const label = [...marquee.top, ...marquee.bottom].join(', ');
   return (
     <section id="skills" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <div className="sec-head rv">
         <p className="label">Skills</p>
         <h2>My toolbox</h2>
       </div>
-      <div className="marquee" role="img" aria-label={`Tools: ${label}`}>
-        <Row items={marquee.top} />
-        <Row items={marquee.bottom} reverse />
-      </div>
+      <SkillSphere items={SPHERE_ITEMS} />
       <div className="tools">
         {toolGroups.map((g) => (
           <div className="tool dz rv" key={g.title}>
