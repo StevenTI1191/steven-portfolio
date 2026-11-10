@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { profile } from '../data/profile.js';
 
 const LINKS = [
+  { href: '#exp', label: 'Experience' },
   { href: '#work', label: 'Projects' },
   { href: '#skills', label: 'Skills' },
   { href: '#cert', label: 'Certifications' },
-  { href: '#exp', label: 'Experience' },
   { href: '#contact', label: 'Contact' },
 ];
 

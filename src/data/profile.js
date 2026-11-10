@@ -95,19 +95,22 @@ export const toolGroups = [
 export const badges = [
   { name: 'AWS SimuLearn: AI Practitioner', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '/badges/aws-simulearn-ai-practitioner.png', shape: 'hex', color: '#EA580C', short: 'AWS' },
   { name: 'Oracle Certified Foundations Associate: Agentic AI', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '/badges/oracle-agentic-ai-foundations.png', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
-  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
-  { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
-  { name: 'Junior Network Administrator', issuer: '[Issuer]', year: '[Year]', category: 'network', link: '', image: '', shape: 'shield', color: '#0F766E', short: 'JNA' },
+  { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: 'Oct 2026', category: 'ai', link: '', image: '', logo: '/logos/anthropic.png', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
+  { name: 'The Arduino Platform and C Programming', issuer: 'UC Irvine', year: 'Sep 2026', category: 'other', link: '', image: '', shape: 'hex', color: '#1E40AF', short: 'UCI' },
+  { name: 'Technical Support Fundamentals', issuer: 'Google', year: 'May 2026', category: 'other', link: '', image: '', logo: '/logos/google.png', shape: 'circle', color: '#4285F4', short: 'G' },
   { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '/badges/ec-council-ehe.png', shape: 'shield', color: '#DC2626', short: 'EHE' },
-  { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: '[Year]', category: 'ai', link: '', image: '', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
+  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', shape: 'hex', color: '#2563EB', short: 'CCNA' },
+  { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/mikrotik.png', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
+  { name: 'Junior Network Administrator', issuer: 'BNSP', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/bnsp.png', shape: 'shield', color: '#0F766E', short: 'JNA' },
 ];
 
 export const badgeFilters = [
   { id: 'all', label: 'All' },
   { id: 'cloud', label: 'Cloud' },
+  { id: 'ai', label: 'AI' },
   { id: 'network', label: 'Networking' },
   { id: 'security', label: 'Security' },
-  { id: 'ai', label: 'AI' },
+  { id: 'other', label: 'Other' },
 ];
 
 export const experience = [
@@ -129,7 +132,7 @@ export const robo = {
     { q: 'What are his skills?', a: 'Laravel, React, PHP, MySQL and REST APIs for the web, networking with MikroTik and Cisco, and AWS and generative AI.' },
     { q: 'How can I contact him?', a: 'Email him at achensteven2005@gmail.com, or reach him on LinkedIn. The contact section has both.' },
     { q: 'What languages does he speak?', a: 'Steven speaks English, Indonesian, and Chinese.' },
-    { q: 'Any certifications?', a: 'Yes. He holds the AWS SimuLearn AI Practitioner badge, Oracle Agentic AI Foundation Associate, CCNA, MikroTik MTCNA, Ethical Hacking Essentials, and more on the badge shelf.' },
+    { q: 'Any certifications?', a: 'Yes. Highlights include the AWS SimuLearn AI Practitioner badge, Oracle Agentic AI Foundations Associate, and EC-Council Ethical Hacking Essentials, plus CCNA, MikroTik MTCNA, Google Technical Support Fundamentals, and Claude 101.' },
   ],
   fallback: "I can't reach my AI brain right now, but you can tap one of the quick questions, or check the sections below.",
 };

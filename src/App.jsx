@@ -21,10 +21,10 @@ export default function App() {
       <Navbar />
       <main className="wrap">
         <Hero onTalk={() => roboRef.current?.intro()} />
+        <Experience />
         <Projects />
         <Skills />
         <Badges />
-        <Experience />
         <Contact />
         <Footer />
       </main>

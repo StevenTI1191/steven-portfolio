@@ -148,8 +148,8 @@ export default function Badges() {
             {shown.map((b, i) => {
               const body = (
                 <>
-                  {b.image ? (
-                    <img className="cert-thumb" src={b.image} alt="" />
+                  {b.image || b.logo ? (
+                    <img className={`cert-thumb${b.image ? '' : ' is-logo'}`} src={b.image || b.logo} alt="" />
                   ) : (
                     <span className="cert-dot" style={{ background: b.color }} aria-hidden="true">{b.short}</span>
                   )}

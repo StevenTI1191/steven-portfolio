@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { projects } from '../data/profile.js';
 import Button from './Button.jsx';
-import Mockup from './Mockup.jsx';
 
-function ProjectCard({ p, open, onToggle, cardRef }) {
+function ProjectCard({ p, cardRef }) {
+  const links = [p.github && { href: p.github, label: 'GitHub ↗' }, p.demo && { href: p.demo, label: 'Live demo ↗' }].filter(Boolean);
+
   return (
     <article ref={cardRef} className={`sheet dz k${p.color.slice(1)}`}>
       <div className="sheet-head">
@@ -25,29 +26,20 @@ function ProjectCard({ p, open, onToggle, cardRef }) {
           <span>{p.stat.label}</span>
         </div>
       )}
-      <div className="acts">
-        <Button primary small aria-expanded={open} onClick={onToggle}>
-          {open ? 'Hide details ↑' : 'View details ↓'}
-        </Button>
-        {p.github && (
-          <Button small href={p.github}>
-            GitHub ↗
-          </Button>
-        )}
-      </div>
-      {open && (
-        <div className="more-body">
-          <Mockup kind={p.mock} screenshot={p.screenshot} title={p.title} />
-          <div className="panels">
-            <div className="panel">
-              <p className="label">Problem</p>
-              <p>{p.problem}</p>
-            </div>
-            <div className="panel mech">
-              <p className="label">{p.mechanismLabel}</p>
-              <p>{p.mechanism}</p>
-            </div>
-          </div>
+      {p.stack && (
+        <div className="chips">
+          {p.stack.map((s) => (
+            <span className="chip" key={s}>{s}</span>
+          ))}
+        </div>
+      )}
+      {links.length > 0 && (
+        <div className="acts">
+          {links.map((l, i) => (
+            <Button key={l.href} small primary={i === 0} href={l.href}>
+              {l.label}
+            </Button>
+          ))}
         </div>
       )}
     </article>
@@ -55,7 +47,6 @@ function ProjectCard({ p, open, onToggle, cardRef }) {
 }
 
 export default function Projects() {
-  const [openId, setOpenId] = useState(null);
   const cards = useRef([]);
 
   // Each card sticks a little lower than the one before, so the edges peek out like a stack.
@@ -77,10 +68,6 @@ export default function Projects() {
     return () => removeEventListener('resize', layout);
   }, [layout]);
 
-  useEffect(() => {
-    layout();
-  }, [openId, layout]);
-
   return (
     <section id="work" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       <div className="sec-head rv">
@@ -89,13 +76,7 @@ export default function Projects() {
       </div>
       <div className="stack">
         {projects.map((p, i) => (
-          <ProjectCard
-            key={p.id}
-            p={p}
-            open={openId === p.id}
-            onToggle={() => setOpenId((cur) => (cur === p.id ? null : p.id))}
-            cardRef={(el) => (cards.current[i] = el)}
-          />
+          <ProjectCard key={p.id} p={p} cardRef={(el) => (cards.current[i] = el)} />
         ))}
       </div>
     </section>
