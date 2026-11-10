@@ -94,6 +94,7 @@ export const toolGroups = [
 // shape: 'hex' | 'circle' | 'shield' | 'diamond' (placeholder only)
 export const badges = [
   { name: 'AWS SimuLearn: AI Practitioner', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '/badges/aws-simulearn-ai-practitioner.png', shape: 'hex', color: '#EA580C', short: 'AWS' },
+  { name: 'AWS Cloud Quest: Generative AI Architect', issuer: 'Amazon Web Services (AWS)', year: '[Year]', category: 'cloud', link: '', image: '/badges/aws-cloud-quest-genai-architect.png', shape: 'hex', color: '#92400E', short: 'AWS' },
   { name: 'Oracle Certified Foundations Associate: Agentic AI', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '/badges/oracle-agentic-ai-foundations.png', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
   { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: 'Oct 2026', category: 'ai', link: '', image: '', logo: '/logos/anthropic.png', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
   { name: 'Technical Support Fundamentals', issuer: 'Google', year: 'May 2026', category: 'other', link: '', image: '', logo: '/logos/google.png', shape: 'circle', color: '#4285F4', short: 'G' },
