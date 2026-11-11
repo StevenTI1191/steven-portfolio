@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { badges, badgeFilters } from '../data/profile.js';
 import Button from './Button.jsx';
 
@@ -88,10 +88,11 @@ export default function Badges() {
   const shown = badges.filter((b) => filter === 'all' || b.category === filter);
   const kindLabel = (b) => badgeFilters.find((f) => f.id === b.category)?.label || b.category;
 
-  const close = () => {
+  // Stable function, so the open lightbox doesn't re-grab focus on every re-render
+  const close = useCallback(() => {
     setSelected(null);
     lastRef.current?.focus();
-  };
+  }, []);
 
   return (
     <section id="cert" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

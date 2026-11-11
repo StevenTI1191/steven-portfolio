@@ -66,8 +66,23 @@ export default function SkillSphere({ items }) {
     box.addEventListener('pointercancel', onUp);
     box.addEventListener('pointerleave', onLeave);
 
+    // Only animate while the sphere is on screen, to save battery on phones
     let raf = 0;
+    let onScreen = true;
+    const io =
+      'IntersectionObserver' in window
+        ? new IntersectionObserver(([e]) => {
+            onScreen = e.isIntersecting;
+            if (onScreen && !raf) raf = requestAnimationFrame(draw);
+          })
+        : null;
+    io?.observe(box);
+
     const draw = () => {
+      if (!onScreen) {
+        raf = 0;
+        return;
+      }
       if (!dragging) {
         const t = hovering ? target : { x: 0, y: 0.004 };
         vx += (t.x - vx) * 0.05;
@@ -98,6 +113,7 @@ export default function SkillSphere({ items }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      io?.disconnect();
       ro?.disconnect();
       box.removeEventListener('pointermove', onMove);
       box.removeEventListener('pointerdown', onDown);

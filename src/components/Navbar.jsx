@@ -42,17 +42,35 @@ export default function Navbar() {
     };
   }, []);
 
+  // The highlight pill follows the active link. Re-measure when the web fonts arrive
+  // or the window resizes, since both change the links' widths.
   useEffect(() => {
-    const a = active && linkRefs.current[active];
-    setPill(a ? { left: a.offsetLeft, width: a.offsetWidth, opacity: 1 } : { left: 0, width: 0, opacity: 0 });
+    const place = () => {
+      const a = active && linkRefs.current[active];
+      setPill(a ? { left: a.offsetLeft, width: a.offsetWidth, opacity: 1 } : { left: 0, width: 0, opacity: 0 });
+    };
+    place();
+    let live = true;
+    document.fonts?.ready.then(() => live && place());
+    addEventListener('resize', place);
+    return () => {
+      live = false;
+      removeEventListener('resize', place);
+    };
   }, [active]);
 
+  // Close the phone menu by tapping outside it or pressing Escape
   useEffect(() => {
     const close = (e) => {
       if (headerRef.current && !headerRef.current.contains(e.target)) setOpen(false);
     };
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
     document.addEventListener('click', close);
-    return () => document.removeEventListener('click', close);
+    addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('click', close);
+      removeEventListener('keydown', onKey);
+    };
   }, []);
 
   return (

@@ -35,15 +35,25 @@ function guessLang(text) {
 const SpeechRec = typeof window !== 'undefined' ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
 
 // Picks an offline answer when the AI endpoint is unavailable
+// Keywords (English and Indonesian) → the quick question whose text contains the hint
+const OFFLINE_TOPICS = [
+  [/(certif|sertifikat|badge|lisensi|license|aws|oracle|cisco|ccna)/, 'certification'],
+  [/(speak|language|bahasa|chinese|mandarin|english|inggris)/, 'languages'],
+  [/(contact|email|hire|reach|linkedin|kontak|hubungi|rekrut)/, 'contact'],
+  [/(skill|stack|tool|keahlian|kemampuan|teknologi|bisa apa)/, 'skills'],
+  [/(project|build|built|proyek|projek|bikin|membuat|aplikasi)/, 'projects'],
+  [/(who|about|do|steven|siapa|kerja|work)/, 'does Steven do'],
+];
 function offlineAnswer(q) {
   const s = q.toLowerCase();
-  const match =
-    robo.quick.find((x) => x.q.toLowerCase() === s) ||
-    (/(skill|stack|tool|language)/.test(s) && robo.quick[2]) ||
-    (/(project|build|built|work)/.test(s) && robo.quick[1]) ||
-    (/(contact|email|hire|reach|linkedin)/.test(s) && robo.quick[3]) ||
-    (/(who|about|do|steven)/.test(s) && robo.quick[0]);
-  return match ? match.a : robo.fallback;
+  const exact = robo.quick.find((x) => x.q.toLowerCase() === s);
+  if (exact) return exact.a;
+  for (const [re, hint] of OFFLINE_TOPICS) {
+    if (!re.test(s)) continue;
+    const hit = robo.quick.find((x) => x.q.toLowerCase().includes(hint.toLowerCase()));
+    if (hit) return hit.a;
+  }
+  return robo.fallback;
 }
 
 const Robo = forwardRef(function Robo(_, ref) {

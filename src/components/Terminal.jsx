@@ -201,7 +201,7 @@ export default function Terminal() {
     } else if (e.key === 'Escape') {
       e.preventDefault();
       hide();
-    } else if (e.key.toLowerCase() === 'l' && e.ctrlKey) {
+    } else if (e.key?.toLowerCase() === 'l' && e.ctrlKey) {
       e.preventDefault();
       setLines([]);
     }
@@ -211,7 +211,15 @@ export default function Terminal() {
 
   return (
     <div className="term-backdrop" onMouseDown={(e) => e.target === e.currentTarget && hide()}>
-      <div className="term" role="dialog" aria-modal="true" aria-label="Terminal">
+      <div
+        className="term"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Terminal"
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && e.target !== inputRef.current) hide();
+        }}
+      >
         <div className="term-bar">
           <span className="term-dots" aria-hidden="true"><i /><i /><i /></span>
           <span className="term-title">steven@sldev — zsh</span>

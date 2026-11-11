@@ -26,6 +26,7 @@ export default function HireForm() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (state === 'sending') return;
     const errs = check(form);
     setErrors(errs);
     if (Object.keys(errs).length) {

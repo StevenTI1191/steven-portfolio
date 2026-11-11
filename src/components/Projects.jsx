@@ -64,8 +64,14 @@ export default function Projects() {
 
   useEffect(() => {
     layout();
+    // Card heights change once the web fonts load, so measure again then
+    let live = true;
+    document.fonts?.ready.then(() => live && layout());
     addEventListener('resize', layout);
-    return () => removeEventListener('resize', layout);
+    return () => {
+      live = false;
+      removeEventListener('resize', layout);
+    };
   }, [layout]);
 
   return (

@@ -33,6 +33,13 @@ export function useFx() {
     // Konami
     let pos = 0;
     const onKey = (e) => {
+      // Autofill sends keydown events with no key; typing in a form shouldn't count either
+      if (typeof e.key !== 'string') return;
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) {
+        pos = 0;
+        return;
+      }
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
       pos = k === KONAMI[pos] ? pos + 1 : k === KONAMI[0] ? 1 : 0;
       if (pos === KONAMI.length) {
