@@ -35,11 +35,15 @@ export default function HireForm() {
       return;
     }
     setState('sending');
+    // Give up after 20 seconds so the button never stays on "Sending…"
+    const ctrl = new AbortController();
+    const giveUp = setTimeout(() => ctrl.abort(), 20000);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, elapsed: Date.now() - started.current }),
+        signal: ctrl.signal,
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
@@ -56,6 +60,8 @@ export default function HireForm() {
     } catch {
       setFailMsg("Your message couldn't be sent. Check your connection and try again.");
       setState('failed');
+    } finally {
+      clearTimeout(giveUp);
     }
   };
 

@@ -35,8 +35,9 @@ const json = (data, status = 200, extra = {}) =>
 // Same-site check. Browsers always send Origin on a cross-site POST, so another
 // website calling this endpoint from its own pages is refused.
 function isAllowedOrigin(request) {
+  // Browsers always send Origin on a POST, so a missing one means a script, not a visitor
   const origin = request.headers.get('Origin');
-  if (!origin) return true; // same-origin requests from some browsers, curl, health checks
+  if (!origin) return false;
   try {
     const o = new URL(origin);
     const self = new URL(request.url);
@@ -112,7 +113,8 @@ export async function onRequestPost({ request, env }) {
     return json({ reply });
   } catch (err) {
     // Includes running out of the free daily allocation; the page falls back to prepared answers
-    return json({ error: 'AI unavailable', detail: String(err?.message || err) }, 503);
+    console.error('chat AI failed:', err?.message || err); // visible in Cloudflare logs
+    return json({ error: 'AI unavailable' }, 503);
   }
 }
 

@@ -260,11 +260,15 @@ const Robo = forwardRef(function Robo(_, ref) {
     }
 
     let reply = '';
+    // Give up after 20 seconds so Robo never stays stuck "thinking"
+    const ctrl = new AbortController();
+    const giveUp = setTimeout(() => ctrl.abort(), 20000);
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: next.slice(-8) }),
+        signal: ctrl.signal,
       });
       if (res.status === 429) {
         reply = "You're asking faster than I can think! Give me a minute, or tap a quick question.";
@@ -275,6 +279,8 @@ const Robo = forwardRef(function Robo(_, ref) {
       }
     } catch {
       reply = '';
+    } finally {
+      clearTimeout(giveUp);
     }
     answer(reply || offlineAnswer(q));
   };

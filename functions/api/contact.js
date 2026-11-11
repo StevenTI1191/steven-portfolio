@@ -21,8 +21,9 @@ const json = (data, status = 200, extra = {}) =>
   });
 
 function isAllowedOrigin(request) {
+  // Browsers always send Origin on a POST, so a missing one means a script, not a visitor
   const origin = request.headers.get('Origin');
-  if (!origin) return true;
+  if (!origin) return false;
   try {
     const o = new URL(origin);
     const self = new URL(request.url);
