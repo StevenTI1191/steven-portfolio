@@ -18,6 +18,8 @@ export const profile = {
   github: 'https://github.com/StevenTI1191',
   // Put your CV in /public and point to it here (replace the file to update it)
   cv: '/Steven-Lim-CV.pdf',
+  // 3D avatar in the hero (transparent background). Set to '' to hide the card.
+  avatar: '/avatar.webp',
   languages: ['English (professional working)', 'Indonesian (native)', 'Chinese (full professional)'],
   availability: 'Open to roles in software engineering and machine learning, plus freelance web projects. I usually reply within a day.',
 };
@@ -96,6 +98,9 @@ export const projects = [
     demo: 'https://klik-apotek.vercel.app',
   },
 ];
+
+// Words on the 3D ring that spins around the avatar's head (keep it to about 8)
+export const avatarRing = ['FULL-STACK', 'LARAVEL', 'REACT.JS', 'AWS', 'GENERATIVE AI', 'CCNA', 'MTCNA', 'NETWORKING'];
 
 export const marquee = {
   top: ['Laravel', 'React.js', 'PHP', 'MySQL', 'REST API'],
