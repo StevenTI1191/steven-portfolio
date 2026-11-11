@@ -297,6 +297,41 @@ const Robo = forwardRef(function Robo(_, ref) {
     return () => removeEventListener('robo-ask', onAsk);
   }, []);
 
+  // The bubble floats over the page, so it steps aside whenever it would cover a button,
+  // link or form field. It stays put while Robo is talking, and comes back when he speaks again.
+  const bubbleRef = useRef(null);
+  useEffect(() => {
+    const HIT = 'main a[href], main button, main input:not([tabindex="-1"]), main textarea, main select, footer a, footer button';
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const el = bubbleRef.current;
+      if (!el || bot.talking) return;
+      const r = el.getBoundingClientRect();
+      const covers = [...document.querySelectorAll(HIT)].some((x) => {
+        const q = x.getBoundingClientRect();
+        return q.width > 0 && q.right > r.left && q.left < r.right && q.bottom > r.top && q.top < r.bottom;
+      });
+      if (covers) setBubbleOpen(false);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    addEventListener('focusin', schedule);
+    // Also check once the intro has lifted, and a few seconds after Robo finishes a line
+    if (idx < 0) schedule();
+    const t = setTimeout(schedule, idx >= 0 ? 3500 : 1800);
+    return () => {
+      removeEventListener('scroll', schedule);
+      removeEventListener('resize', schedule);
+      removeEventListener('focusin', schedule);
+      clearTimeout(t);
+      cancelAnimationFrame(raf);
+    };
+  }, [bot, bubbleOpen, idx]);
+
   // Konami code: Robo shows off his dance moves
   const sayRef = useRef(say);
   sayRef.current = say;
@@ -490,7 +525,7 @@ const Robo = forwardRef(function Robo(_, ref) {
         )}
 
         {bubbleOpen && !chatOpen && (
-          <div className="bubble" aria-live="polite">
+          <div className="bubble" aria-live="polite" ref={bubbleRef}>
             <button className="x" type="button" aria-label="Close bubble" onClick={() => { stop(); setBubbleOpen(false); }}>×</button>
             <div>
               {words.map((w, i) => (
