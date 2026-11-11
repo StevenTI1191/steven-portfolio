@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { profile } from '../data/profile.js';
 import { GitHubIcon, LinkedInIcon, MailIcon } from './icons.jsx';
+import { openTerminal } from './Terminal.jsx';
 
 function localTime() {
   try {
@@ -53,6 +54,9 @@ export default function Footer() {
           {NAV.map((l) => (
             <a key={l.href} href={l.href}>{l.label}</a>
           ))}
+          <button type="button" className="foot-link" onClick={openTerminal}>
+            Open terminal &gt;_
+          </button>
         </nav>
 
         <div className="foot-col">

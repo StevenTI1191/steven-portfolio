@@ -153,6 +153,7 @@ export const robo = {
   greeting: "Hi! I'm Robo, Steven's assistant. Ask me anything about him.",
   intro: 'Hello! This is Steven Lim, an Information Technology student at Politeknik Caltex Riau. He builds full-stack web apps with Laravel and React, and he knows networking too. Scroll down to see his work.',
   poke: "Hey, that tickles! I'm Robo, Steven's assistant. Nice to meet you!",
+  terminalHint: 'Psst… Steven has a hidden terminal. Press ` on your keyboard, or tap >_ at the top.',
   quick: [
     { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau and a Technical Support Engineer at Apical. Before that, he built web systems for Laksamana Group.' },
     { q: 'Tell me about his projects', a: 'His final project is an event management system now used by PT Laksamana Muda Bersatu, with a sales pipeline, OCR payment checks, and conflict detection. He also built an IndoBERT sentiment analysis, the EcoScore map app, the EventSight Android app, and the KlikApotek pharmacy store.' },

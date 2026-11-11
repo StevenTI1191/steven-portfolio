@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { profile } from '../data/profile.js';
+import { openTerminal } from './Terminal.jsx';
 
 const LINKS = [
   { href: '#exp', label: 'Experience' },
@@ -74,16 +75,30 @@ export default function Navbar() {
             </a>
           ))}
         </nav>
-        <button
-          className="menu-btn"
-          type="button"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          aria-controls="links"
-          onClick={() => setOpen((o) => !o)}
-        >
-          <span />
-        </button>
+        <div className="nav-actions">
+          <button
+            className="term-btn"
+            type="button"
+            aria-label="Open terminal"
+            title="Open terminal ( ` )"
+            onClick={() => {
+              setOpen(false);
+              openTerminal();
+            }}
+          >
+            &gt;<span className="cursor">_</span>
+          </button>
+          <button
+            className="menu-btn"
+            type="button"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="links"
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span />
+          </button>
+        </div>
         <div className="progress" aria-hidden="true">
           <i ref={progRef} />
         </div>

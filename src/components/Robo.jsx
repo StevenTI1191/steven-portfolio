@@ -192,6 +192,23 @@ const Robo = forwardRef(function Robo(_, ref) {
     listEnd.current?.scrollIntoView({ block: 'nearest' });
   }, [history, thinking]);
 
+  // After a quiet moment, Robo points out the hidden terminal (once, if the visitor hasn't interacted)
+  const quiet = useRef({ interacted: false, bubbleOpen: true, chatOpen: false });
+  quiet.current.bubbleOpen = bubbleOpen;
+  quiet.current.chatOpen = chatOpen;
+  if (chatOpen || idx >= 0) quiet.current.interacted = true;
+  useEffect(() => {
+    if (!robo.terminalHint) return;
+    const t = setTimeout(() => {
+      const q = quiet.current;
+      if (q.interacted || q.chatOpen || !q.bubbleOpen) return;
+      setText(robo.terminalHint);
+      setIdx(-1);
+      act('wave');
+    }, 15000);
+    return () => clearTimeout(t);
+  }, [act]);
+
   const answer = (reply) => {
     setHistory((h) => [...h, { role: 'assistant', content: reply }]);
     setThinking(false);
@@ -240,6 +257,18 @@ const Robo = forwardRef(function Robo(_, ref) {
     }
     answer(reply || offlineAnswer(q));
   };
+
+  // The terminal's "ask <question>" command hands the question to Robo
+  const askRef = useRef(ask);
+  askRef.current = ask;
+  useEffect(() => {
+    const onAsk = (e) => {
+      setChatOpen(true);
+      askRef.current(String(e.detail || ''));
+    };
+    addEventListener('robo-ask', onAsk);
+    return () => removeEventListener('robo-ask', onAsk);
+  }, []);
 
   const words = text.split(' ');
   const pct = idx < 0 ? 0 : Math.min(100, Math.round(((idx + 1) / words.length) * 100));

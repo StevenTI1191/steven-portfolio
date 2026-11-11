@@ -8,6 +8,7 @@ import Experience from './components/Experience.jsx';
 import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 import Robo from './components/Robo.jsx';
+import Terminal from './components/Terminal.jsx';
 import { useReveal } from './hooks/useReveal.js';
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Footer />
       </main>
       <Robo ref={roboRef} />
+      <Terminal />
     </>
   );
 }
