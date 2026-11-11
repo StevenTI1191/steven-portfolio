@@ -25,10 +25,25 @@ function bumpQuota() {
   }
 }
 
-// Robo replies in the visitor's language, so pick a matching voice for Indonesian replies
-const ID_WORDS = /\b(yang|dan|adalah|dengan|saya|dia|untuk|tidak|ini|itu|bisa|sudah|juga|dari|ke|di)\b/gi;
+// Robo replies in the visitor's language, so pick a voice that matches the reply.
+// Common short words are a reliable enough signal for a line or two of text.
+const LANG_WORDS = [
+  ['id-ID', /\b(yang|dan|adalah|dengan|saya|dia|untuk|tidak|ini|itu|bisa|sudah|juga|dari|ke|di)\b/gi],
+  ['de-DE', /\b(der|die|das|und|ist|nicht|ich|mit|hat|ein|eine|auch|für|sie|er|wie|kann)\b/gi],
+  ['fr-FR', /\b(le|la|les|et|est|une|des|pour|avec|pas|il|elle|vous|dans|sur)\b/gi],
+  ['es-ES', /\b(el|los|las|y|es|una|para|con|por|que|su|del|como|también)\b/gi],
+];
 function guessLang(text) {
-  return (text.match(ID_WORDS) || []).length >= 2 ? 'id-ID' : 'en-US';
+  let best = 'en-US';
+  let top = 1; // need at least 2 hits to switch away from English
+  for (const [lang, re] of LANG_WORDS) {
+    const n = (text.match(re) || []).length;
+    if (n > top) {
+      best = lang;
+      top = n;
+    }
+  }
+  return best;
 }
 
 // Browser speech-to-text (Chrome, Edge, Safari). Missing in Firefox, where the mic button is hidden.
