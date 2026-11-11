@@ -4,6 +4,24 @@ import { experience } from '../data/profile.js';
 // Notes in [square brackets] are placeholders still to be filled in, so they're never shown
 const clean = (t = '') => t.replace(/\s*\[[^\]]*\]/g, '').trim();
 
+// The role on its own; the organisation gets its own line next to its logo
+const role = (e) => (e.org ? e.title.replace(` · ${e.org}`, '') : e.title);
+
+function OrgMark({ e }) {
+  if (e.logo) {
+    return (
+      <span className={`org-mark${e.logoFill ? ' fill' : ''}`}>
+        <img src={e.logo} alt={`${e.org} logo`} width="44" height="44" loading="lazy" decoding="async" />
+      </span>
+    );
+  }
+  return (
+    <span className="org-mark initials" aria-hidden="true">
+      {e.initials || (e.org || e.title).slice(0, 2)}
+    </span>
+  );
+}
+
 export default function Experience() {
   const tl = useRef(null);
 
@@ -31,10 +49,16 @@ export default function Experience() {
         {experience.map((e) => (
           <div className={`job dz spot rv${e.now ? ' now' : ''}`} key={e.title}>
             <span className="dot" aria-hidden="true" />
-            {e.now && <span className="now-tag">Now</span>}
-            <span className="when">{e.when}</span>
-            <h3>{e.title}</h3>
-            {clean(e.text) && <p>{clean(e.text)}</p>}
+            <div className="job-row">
+              <OrgMark e={e} />
+              <div className="job-body">
+                {e.now && <span className="now-tag">Now</span>}
+                <span className="when">{e.when}</span>
+                <h3>{role(e)}</h3>
+                {e.org && <span className="org">{e.org}</span>}
+                {clean(e.text) && <p>{clean(e.text)}</p>}
+              </div>
+            </div>
           </div>
         ))}
       </div>

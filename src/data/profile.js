@@ -142,13 +142,15 @@ export const badgeFilters = [
   { id: 'other', label: 'Other' },
 ];
 
+// Experience timeline. `org` + `logo` (in public/logos) show beside each role;
+// without a logo, `initials` are shown in a small tile instead.
 export const experience = [
-  { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
-  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
-  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
-  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', text: 'Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
-  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', text: 'Developed automated e-ticketing workflows and a seat selection system.' },
-  { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', text: 'Bachelor of Applied Science, Information Technology.' },
+  { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', org: 'Orbit Future Academy', logo: '/logos/orbit.png', logoFill: true, text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
+  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
+  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
+  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', org: 'Laksamana Group', initials: 'LG', text: 'Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
+  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', org: 'Laksamana Group', initials: 'LG', text: 'Developed automated e-ticketing workflows and a seat selection system.' },
+  { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', org: 'Politeknik Caltex Riau', initials: 'PCR', text: 'Bachelor of Applied Science, Information Technology.' },
 ];
 
 // Robo: quick questions and the offline answers used when the AI is unavailable

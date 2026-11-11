@@ -609,3 +609,14 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dock-voice:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* with the round fallback button instead of the 3D robot, sit on its top-right edge */
 .robo-fallback + .dock-voice{top:-12px;right:-12px;width:28px;height:28px}
+
+/* Experience: organisation logo beside each role */
+.job-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;align-items:start}
+.job-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.job .org{font-weight:600;font-size:15px;color:var(--ink);margin-top:-2px}
+.org-mark{width:44px;height:44px;border-radius:12px;background:#FFFFFF;border:1.5px solid var(--ink);display:grid;place-items:center;overflow:hidden;flex:none;margin-top:2px}
+.org-mark img{width:100%;height:100%;object-fit:contain;padding:3px;display:block}
+.org-mark.fill{border-color:transparent}
+.org-mark.fill img{padding:0;object-fit:cover}
+.org-mark.initials{background:var(--ink);color:var(--paper);font:600 13px var(--display);letter-spacing:.02em}
+@media (max-width:420px){.job-row{grid-template-columns:36px minmax(0,1fr);gap:12px}.org-mark{width:36px;height:36px;border-radius:10px}.org-mark.initials{font-size:11px}}
