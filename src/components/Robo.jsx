@@ -150,8 +150,11 @@ function tourLine(spot) {
   return (robo.tour?.[spot] || '')
     .replace('{certs}', badges.length)
     .replace('{projects}', projects.length)
-    .replace('{groups}', toolGroups.map((g) => g.title.toLowerCase()).join(', '));
+    .replace('{groups}', listWords(toolGroups.map((g) => g.title)));
 }
+
+// "A, B, and C"
+const listWords = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')}, and ${xs[xs.length - 1]}`);
 
 // A longer offline explanation, used when the visitor asks about the current spot and the AI is unreachable
 function spotDetail(spot) {
@@ -496,11 +499,24 @@ const Robo = forwardRef(function Robo(_, ref) {
     ask(`Tell me more about ${spotName(spot)}.`);
   };
 
-  const shown = ready3d || !has3d;
+  // On a first visit the black intro screen covers the page; start the entrance once it has lifted
+  const [introGone, setIntroGone] = useState(() => !document.getElementById('intro'));
+  useEffect(() => {
+    if (introGone) return;
+    const t = setInterval(() => {
+      if (!document.getElementById('intro')) {
+        clearInterval(t);
+        setIntroGone(true);
+      }
+    }, 150);
+    return () => clearInterval(t);
+  }, [introGone]);
+
+  const shown = (ready3d || !has3d) && introGone;
   useEffect(() => {
     if (!big) return;
     if (!shown) {
-      const giveUp = setTimeout(() => setBig(false), 8000); // the robot never loaded: don't wait forever
+      const giveUp = setTimeout(() => setBig(false), 10000); // the robot never loaded: don't wait forever
       return () => clearTimeout(giveUp);
     }
     const wave = setTimeout(() => act('wave'), 500);
@@ -523,8 +539,8 @@ const Robo = forwardRef(function Robo(_, ref) {
     return () => removeEventListener('robo-ask', onAsk);
   }, []);
 
-  // Scroll tour: when the visitor settles on a section or project card, Robo explains it.
-  // Each spot once per visit, text only. Closing a tour bubble turns the tour off for this visit.
+  // Scroll tour: when the visitor settles on a section or project card, the assistant explains it,
+  // and again whenever they come back to it. "Stop tour" turns it off until the page is reloaded.
   const chatOpenRef = useRef(chatOpen);
   chatOpenRef.current = chatOpen;
   useEffect(() => {
@@ -534,7 +550,8 @@ const Robo = forwardRef(function Robo(_, ref) {
       raf = 0;
       const t = tourRef.current;
       const spot = currentSpot();
-      if (spot === t.spot) return;
+      if (spot === t.spot && !t.retry) return;
+      t.retry = false;
       t.spot = spot;
       setSpot(spot);
       clearTimeout(settle);
@@ -547,7 +564,12 @@ const Robo = forwardRef(function Robo(_, ref) {
           (bot.talking && !t.showing) || // a newer tour line may cut in on an older one, never on an answer
           document.documentElement.classList.contains('term-open') ||
           /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
-        if (t.off || t.spot !== spot || busy) return;
+        if (t.off || t.spot !== spot) return;
+        if (busy) {
+          // Not now (chat open, typing, or answering): look at this spot again on the next scroll
+          t.retry = true;
+          return;
+        }
         const line = tourLine(spot);
         if (!line) return;
         t.last = spot;
