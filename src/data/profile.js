@@ -11,7 +11,7 @@ export const profile = {
   timezone: 'Asia/Jakarta',
   status: 'Open to work',
   lead: 'Full-stack developer working with Laravel and React, backed by a solid grounding in networking.',
-  leadExtra: 'Now a Technical Support Engineer at Apical, and exploring generative AI.',
+  leadExtra: 'Now a Technical Support Engineer intern at Apical and an AWS re/start learner, exploring cloud and generative AI.',
   // Phrases typed after "I build" in the hero
   typeRoles: ['full-stack web apps', 'event management systems', 'AI-powered tools', 'networks that just work'],
   heroTags: ['Full-stack web', 'Laravel · React', 'Networking', 'Generative AI'],
@@ -143,8 +143,9 @@ export const badgeFilters = [
 ];
 
 export const experience = [
-  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', text: 'Kota Dumai, Riau. [Add your main responsibility.]' },
-  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', text: 'Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
+  { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
+  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
+  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
   { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', text: 'Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
   { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', text: 'Developed automated e-ticketing workflows and a seat selection system.' },
   { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', text: 'Bachelor of Applied Science, Information Technology.' },
@@ -157,7 +158,7 @@ export const robo = {
   poke: "Hey, that tickles! I'm Robo, Steven's assistant. Nice to meet you!",
   terminalHint: 'Psst… Steven has a hidden terminal. Press ` on your keyboard, or tap >_ at the top.',
   quick: [
-    { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau and a Technical Support Engineer at Apical. Before that, he built web systems for Laksamana Group.' },
+    { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau. Right now he is a Technical Support Engineer intern at Apical and an AWS re/start learner at Orbit Future Academy. Before that, he built web systems for Laksamana Group.' },
     { q: 'Tell me about his projects', a: 'His final project is an event management system now used by PT Laksamana Muda Bersatu, with a sales pipeline, OCR payment checks, and conflict detection. He also built an IndoBERT sentiment analysis, the EcoScore map app, the EventSight Android app, and the KlikApotek pharmacy store.' },
     { q: 'What are his skills?', a: 'Laravel, React, PHP, MySQL and REST APIs for the web, networking with MikroTik and Cisco, and AWS and generative AI.' },
     { q: 'How can I contact him?', a: 'Email him at achensteven2005@gmail.com, or reach him on LinkedIn. The contact section has both.' },
@@ -169,7 +170,7 @@ export const robo = {
   // Project cards get their own line, built from the projects list above.
   // {certs} is replaced with the number of certifications.
   tour: {
-    exp: "This is Steven's journey: from IT student at Politeknik Caltex Riau, to building web systems at Laksamana Group, to Technical Support Engineer at Apical today.",
+    exp: "This is Steven's journey: from IT student at Politeknik Caltex Riau, to building web systems at Laksamana Group, to tech support at Apical and AWS re/start training today.",
     skills: "Steven's toolbox: Laravel, React, PHP and MySQL for the web, MikroTik and Cisco for networks, and AWS for the cloud. Drag the sphere to spin it.",
     cert: '{certs} certifications so far, from AWS and Oracle AI to Cisco CCNA and ethical hacking. Tap a badge to see it up close.',
     contact: 'Want to work with Steven? Send him a message with this form. It goes straight to his inbox.',
