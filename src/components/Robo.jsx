@@ -34,6 +34,7 @@ const LANG_WORDS = [
   ['es-ES', /\b(el|los|las|y|es|una|para|con|por|que|su|del|como|también)\b/gi],
 ];
 function guessLang(text) {
+  if ((text.match(/[\u4e00-\u9fff]/g) || []).length >= 2) return 'zh-CN';
   let best = 'en-US';
   let top = 1; // need at least 2 hits to switch away from English
   for (const [lang, re] of LANG_WORDS) {
@@ -45,6 +46,48 @@ function guessLang(text) {
   }
   return best;
 }
+
+// Robo's voice: the browser's built-in voices, pitched up for a small, friendly robot.
+// Voices differ per device, so try well-known bright-sounding ones first, then any voice in that language.
+const ROBO_PITCH = 1.4;
+const ROBO_RATE = 1.06;
+const PREFERRED_VOICES = {
+  en: ['Google US English', 'Samantha', 'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Ana', 'Microsoft Zira', 'Karen', 'Tessa', 'Moira'],
+  id: ['Google Bahasa Indonesia', 'Damayanti', 'Microsoft Gadis'],
+  zh: ['Google 普通话（中国大陆）', 'Tingting', 'Ting-Ting', 'Microsoft Xiaoxiao', 'Microsoft Huihui'],
+  de: ['Google Deutsch', 'Anna', 'Microsoft Katja', 'Microsoft Hedda'],
+  fr: ['Google français', 'Amelie', 'Amélie', 'Microsoft Denise'],
+  es: ['Google español', 'Monica', 'Mónica', 'Paulina', 'Microsoft Elvira'],
+};
+let voiceCache = [];
+const loadVoices = () => {
+  try {
+    voiceCache = speechSynthesis.getVoices();
+  } catch {
+    voiceCache = [];
+  }
+};
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.addEventListener?.('voiceschanged', loadVoices);
+}
+function pickVoice(lang) {
+  if (!voiceCache.length) loadVoices();
+  const code = lang.slice(0, 2);
+  const inLang = voiceCache.filter((v) => v.lang.toLowerCase().replace('_', '-').startsWith(code));
+  for (const name of PREFERRED_VOICES[code] || []) {
+    const v = inLang.find((x) => x.name.startsWith(name));
+    if (v) return v;
+  }
+  return inLang.find((v) => v.lang.replace('_', '-') === lang) || inLang[0] || null;
+}
+
+// Speech-to-text language: the visitor's browser language when Robo can answer in it
+const MIC_LANGS = { en: 'en-US', id: 'id-ID', zh: 'zh-CN', de: 'de-DE', fr: 'fr-FR', es: 'es-ES' };
+const micLang = () => {
+  const l = (typeof navigator !== 'undefined' && navigator.language) || 'en-US';
+  return MIC_LANGS[l.slice(0, 2).toLowerCase()] ? (l.includes('-') ? l : MIC_LANGS[l.slice(0, 2).toLowerCase()]) : 'en-US';
+};
 
 // Browser speech-to-text (Chrome, Edge, Safari). Missing in Firefox, where the mic button is hidden.
 const SpeechRec = typeof window !== 'undefined' ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
@@ -292,8 +335,9 @@ const Robo = forwardRef(function Robo(_, ref) {
             const u = new SpeechSynthesisUtterance(line);
             const lang = guessLang(line);
             u.lang = lang;
-            u.rate = 1.02;
-            const v = speechSynthesis.getVoices().find((x) => x.lang.toLowerCase().startsWith(lang.slice(0, 2)));
+            u.rate = ROBO_RATE;
+            u.pitch = ROBO_PITCH;
+            const v = pickVoice(lang);
             if (v) u.voice = v;
             u.onboundary = (e) => {
               if (id !== sayId.current) return;
@@ -614,7 +658,7 @@ const Robo = forwardRef(function Robo(_, ref) {
     setMicMsg('');
     let finalText = '';
     const rec = new SpeechRec();
-    rec.lang = (navigator.language || '').toLowerCase().startsWith('id') ? 'id-ID' : 'en-US';
+    rec.lang = micLang();
     rec.interimResults = true;
     rec.maxAlternatives = 1;
     rec.continuous = false;
