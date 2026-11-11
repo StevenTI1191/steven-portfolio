@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page not found · Steven Lim</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+    </script>
+    <style>
+      :root { --bg: #ECECE7; --paper: #F4F4F0; --ink: #111111; --muted: #5E5E58; --accent: #1D4ED8; }
+      :root[data-theme="dark"] { --bg: #121311; --paper: #1B1C1A; --ink: #ECECE7; --muted: #A3A39B; --accent: #8FB0FF; color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+        font: 16px/1.6 "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 24px 16px; }
+      main { width: min(460px, 100%); background: var(--paper); border: 2px solid var(--ink); border-radius: 22px; padding: 32px 28px; box-shadow: 6px 6px 0 var(--ink); }
+      .code { font: 700 13px ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; color: var(--muted); margin: 0 0 8px; }
+      h1 { margin: 0 0 10px; font-size: 30px; line-height: 1.15; text-wrap: balance; }
+      p { margin: 0 0 22px; color: var(--muted); }
+      .path { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--ink); overflow-wrap: anywhere; }
+      a.btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border-radius: 999px; background: var(--ink); color: var(--paper);
+        font-weight: 600; text-decoration: none; }
+      a.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="code">steven@sldev:~$ 404</p>
+      <h1>This page doesn't exist.</h1>
+      <p>Nothing lives at <span class="path" id="path">this address</span>. Everything is on the home page.</p>
+      <a class="btn" href="/">Back to the portfolio →</a>
+    </main>
+    <script>
+      document.getElementById('path').textContent = location.pathname;
+    </script>
+  </body>
+</html>

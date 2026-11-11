@@ -3,7 +3,7 @@
   color-scheme:light;
   --bg:#ECECE7; --paper:#F4F4F0; --ink:#111111; --muted:#5E5E58; --line:#111111;
   --rule:rgba(17,17,17,.08); --hair:rgba(17,17,17,.14);
-  --accent:#2563EB; --accent-ink:#FFFFFF; --hl:#DDE3EE; --hl-ink:#111111; --soft:#E3E3DE;
+  --accent:#2563EB; --accent-text:#1D4ED8; --accent-fill:#2563EB; --accent-ink:#FFFFFF; --hl:#DDE3EE; --hl-ink:#111111; --soft:#E3E3DE;
   --c1:#2563EB; --c2:#7C3AED; --c3:#16A34A; --c4:#EA580C;
   --lilac:#C9CFE0; --peach:#F2B9A0; --mint:#A9D8BE;
   --glass:rgba(244,244,240,.86); --ok:#16A34A;
@@ -19,7 +19,7 @@
   color-scheme:dark;
   --bg:#121311; --paper:#1B1C1A; --ink:#ECECE7; --muted:#A3A39B; --line:#ECECE7;
   --rule:rgba(236,236,231,.06); --hair:rgba(236,236,231,.16);
-  --accent:#4F7DF3; --accent-ink:#FFFFFF; --hl:#1F2945; --hl-ink:#E3E9FF; --soft:#272825;
+  --accent:#4F7DF3; --accent-text:#8FB0FF; --accent-fill:#2563EB; --accent-ink:#FFFFFF; --hl:#1F2945; --hl-ink:#E3E9FF; --soft:#272825;
   --c1:#4F7DF3; --c2:#9B6BF2; --c3:#34C46E; --c4:#F2773A;
   --glass:rgba(27,28,26,.85); --ok:#34C46E;
   --dither:repeating-conic-gradient(#ECECE7 0 25%, transparent 0 50%) 0 0/4px 4px;
@@ -118,7 +118,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:0 
 .checks li{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px;line-height:1.35}
 .checks li::before{content:"";flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/14px no-repeat}
 .stat{display:flex;align-items:baseline;gap:10px;background:var(--hl);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:10px 14px;min-width:0}
-.stat b{font:600 22px var(--display);color:var(--accent);white-space:nowrap}
+.stat b{font:600 22px var(--display);color:var(--accent-text);white-space:nowrap}
 .stat span{font-size:14px;color:var(--ink)}
 .acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-top:14px;border-top:1px solid var(--hair)}
 .btn.sm{min-height:46px;padding:0 14px;font-size:13px;white-space:nowrap}
@@ -241,7 +241,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:0 
 .job.now .dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 0 rgba(37,99,235,.5);animation:ring 1.8s ease-out infinite}
 .job .when{font:500 12px var(--mono);color:var(--muted)}
 .job p{color:var(--muted);font-size:15px}
-.job .now-tag{align-self:flex-start;font:500 11px var(--mono);background:var(--accent);color:#fff;border-radius:999px;padding:3px 9px}
+.job .now-tag{align-self:flex-start;font:500 11px var(--mono);background:var(--accent-fill);color:#fff;border-radius:999px;padding:3px 9px}
 
 /* contact + footer */
 .cta{border-radius:32px;background:#111111;color:#F4F4F0;padding:clamp(24px,5vw,44px);display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
@@ -291,6 +291,11 @@ footer{display:flex;flex-direction:column;gap:14px;padding-top:8px}
 @media (hover:none){.claim:hover{transform:none}}
 
 /* React additions */
+
+/* long unbroken text (emails, URLs) wraps instead of spilling out */
+.hire-done p,.hire-done h3,.bubble,.chat-msg,.hire-fail{overflow-wrap:anywhere}
+.term-btn{white-space:nowrap}
+
 
 /* voice input in Robo's chat */
 .mic-btn{flex:none;position:relative;width:46px;height:46px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
@@ -567,4 +572,16 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .rv.pend{opacity:1;transform:none}
+}
+
+/* Robo's chat on short screens (phones in landscape): only the message list shrinks */
+.chat-head,.chat-quick,.chat-form,.mic-msg{flex:none}
+@supports (height:100dvh){
+  .chat{max-height:min(560px,calc(100dvh - 120px))}
+  @media (max-width:520px){.chat{max-height:calc(100dvh - 100px)}}
+}
+@media (max-height:520px){
+  .chat{max-height:calc(100vh - 24px)}
+  @supports (height:100dvh){.chat{max-height:calc(100dvh - 24px)}}
+  .chat-list{min-height:56px}
 }

@@ -6,6 +6,8 @@ compatibility_date = "2024-09-23"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+# Unknown addresses get public/404.html (with a 404 status) instead of a blank page
+not_found_handling = "404-page"
 
 # Workers AI binding used by functions/api/chat.js
 [ai]
