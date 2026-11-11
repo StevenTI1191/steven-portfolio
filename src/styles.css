@@ -588,3 +588,14 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* On phones, leave room at the very bottom so Robo never sits on the last footer links */
 @media (max-width:520px){.site-footer{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}}
+
+/* scroll tour: actions under a tour line, and the "Explain …" chip in the chat */
+.bubble-acts{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tour-off,.voice-btn{all:unset;cursor:pointer;margin-top:8px;font:500 12px var(--mono);color:var(--muted)}
+.tour-off:hover,.voice-btn:hover{color:var(--ink);text-decoration:underline}
+.tour-off:focus-visible,.voice-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.quick.here{background:var(--ink);color:var(--paper)}
+.quick.here:disabled{opacity:.6}
+.bubble-tools{display:inline-flex;align-items:baseline;gap:12px}
+.voice-btn{display:inline-flex;align-items:center;gap:4px}
+.voice-btn svg{align-self:center}

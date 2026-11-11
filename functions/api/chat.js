@@ -8,7 +8,7 @@
 //   3. Size caps on the conversation and the answer.
 // The page also keeps a daily per-browser cap and answers quick questions without the AI.
 
-import { buildKnowledge, profile } from '../../src/data/profile.js';
+import { buildKnowledge, profile, projects } from '../../src/data/profile.js';
 
 const MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const MAX_TURNS = 8;
@@ -25,6 +25,23 @@ Reply in the same language the visitor uses.
 
 FACTS:
 ${buildKnowledge()}`;
+
+// What the visitor is looking at, sent by the page as a fixed key (never free text,
+// so it can't be used to slip instructions into the prompt)
+const SECTIONS = {
+  top: 'the introduction at the top of the page',
+  exp: "the Experience section (Steven's work and study journey)",
+  skills: 'the Skills section',
+  cert: 'the Certifications section',
+  contact: 'the Contact section with the hire form',
+};
+export function describeContext(key) {
+  if (typeof key !== 'string') return '';
+  if (Object.hasOwn(SECTIONS, key)) return SECTIONS[key];
+  const m = key.match(/^project:([a-z0-9-]{1,40})$/);
+  const p = m && projects.find((x) => x.id === m[1]);
+  return p ? `the project card "${p.title}"` : '';
+}
 
 const json = (data, status = 200, extra = {}) =>
   new Response(JSON.stringify(data), {
@@ -103,9 +120,16 @@ export async function onRequestPost({ request, env }) {
     return json({ error: 'Send at least one user message' }, 400);
   }
 
+  const systemPrompt = (key) => {
+    const where = describeContext(key);
+    return where
+      ? `${SYSTEM_PROMPT}\n\nThe visitor is currently looking at ${where} on the page. If they say "this", "here" or "ini", they mean that.`
+      : SYSTEM_PROMPT;
+  };
+
   try {
     const result = await env.AI.run(MODEL, {
-      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...clean],
+      messages: [{ role: 'system', content: systemPrompt(body?.context) }, ...clean],
       max_tokens: 220,
       temperature: 0.4,
     });

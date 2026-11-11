@@ -165,6 +165,15 @@ export const robo = {
     { q: 'Any certifications?', a: 'Yes. Highlights include the AWS SimuLearn AI Practitioner badge, Oracle Agentic AI Foundations Associate, and EC-Council Ethical Hacking Essentials, plus CCNA, MikroTik MTCNA, Google Technical Support Fundamentals, and Claude 101.' },
   ],
   fallback: "I can't reach my AI brain right now, but you can tap one of the quick questions, or check the sections below.",
+  // Scroll tour: what Robo says when the visitor reaches each section.
+  // Project cards get their own line, built from the projects list above.
+  // {certs} is replaced with the number of certifications.
+  tour: {
+    exp: "This is Steven's journey: from IT student at Politeknik Caltex Riau, to building web systems at Laksamana Group, to Technical Support Engineer at Apical today.",
+    skills: "Steven's toolbox: Laravel, React, PHP and MySQL for the web, MikroTik and Cisco for networks, and AWS for the cloud. Drag the sphere to spin it.",
+    cert: '{certs} certifications so far, from AWS and Oracle AI to Cisco CCNA and ethical hacking. Tap a badge to see it up close.',
+    contact: 'Want to work with Steven? Send him a message with this form. It goes straight to his inbox.',
+  },
 };
 
 // Plain-text summary used as the AI's knowledge (built from the data above)

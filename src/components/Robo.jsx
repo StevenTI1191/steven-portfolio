@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { robo } from '../data/profile.js';
+import { badges, projects, robo } from '../data/profile.js';
 
 // Free-typed questions per visitor per day (quick questions don't count).
 // The server has its own per-minute limit; this just keeps casual spam off the AI quota.
@@ -34,6 +34,76 @@ function guessLang(text) {
 // Browser speech-to-text (Chrome, Edge, Safari). Missing in Firefox, where the mic button is hidden.
 const SpeechRec = typeof window !== 'undefined' ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
 
+function VoiceIcon({ on, size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 5L6 9H2v6h4l5 4V5z" />
+      {on ? <path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14" /> : <path d="M22 9l-6 6M16 9l6 6" />}
+    </svg>
+  );
+}
+
+// ---- Scroll tour: Robo explains whatever the visitor has scrolled to ----
+const TOUR_OFF_KEY = 'robo-tour-off';
+const SECTION_IDS = ['exp', 'skills', 'cert', 'contact'];
+
+// Which section (or which project card) sits in the middle of the screen right now
+function currentSpot() {
+  if (document.getElementById('intro')) return null;
+  const mid = innerHeight * 0.45;
+  const inMid = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.top < mid && r.bottom > mid;
+  };
+  const work = document.getElementById('work');
+  if (work && inMid(work)) {
+    // Project cards stack on top of each other; the newest one past the middle is on top
+    let cur = -1;
+    work.querySelectorAll('article.sheet').forEach((c, i) => {
+      if (c.getBoundingClientRect().top < mid) cur = i;
+    });
+    return cur >= 0 && projects[cur] ? `project:${projects[cur].id}` : null;
+  }
+  for (const id of SECTION_IDS) {
+    const el = document.getElementById(id);
+    if (el && inMid(el)) return id;
+  }
+  return null;
+}
+
+function tourLine(spot) {
+  if (!spot) return '';
+  if (spot.startsWith('project:')) {
+    const i = projects.findIndex((p) => `project:${p.id}` === spot);
+    const p = projects[i];
+    if (!p) return '';
+    return `Project ${i + 1} of ${projects.length}: ${p.title}. ${p.summary}.${p.stat ? ` ${p.stat.value}: ${p.stat.label}.` : ''}`;
+  }
+  return (robo.tour?.[spot] || '').replace('{certs}', badges.length);
+}
+
+// A longer offline explanation, used when the visitor asks about the current spot and the AI is unreachable
+function spotDetail(spot) {
+  if (spot?.startsWith('project:')) {
+    const p = projects.find((x) => `project:${x.id}` === spot);
+    if (p) return `${p.title}: ${p.summary}. Highlights: ${p.points.join('; ')}.${p.stack ? ` Built with ${p.stack.join(', ')}.` : ''}`;
+  }
+  return tourLine(spot);
+}
+
+function spotName(spot) {
+  if (spot?.startsWith('project:')) return projects.find((x) => `project:${x.id}` === spot)?.title || 'this project';
+  return { exp: 'his journey', skills: 'his skills', cert: 'his certifications', contact: 'getting in touch' }[spot] || 'this';
+}
+
+const readTourOff = () => {
+  try {
+    return sessionStorage.getItem(TOUR_OFF_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
 // Picks an offline answer when the AI endpoint is unavailable
 // Keywords (English and Indonesian) → the quick question whose text contains the hint
 const OFFLINE_TOPICS = [
@@ -65,7 +135,14 @@ const Robo = forwardRef(function Robo(_, ref) {
   const [idx, setIdx] = useState(-1);
   const [bubbleOpen, setBubbleOpen] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
-  const [voiceOn, setVoiceOn] = useState(true);
+  // Voice on by default; the visitor's mute choice is remembered in this browser
+  const [voiceOn, setVoiceOn] = useState(() => {
+    try {
+      return localStorage.getItem('robo-voice') !== 'off';
+    } catch {
+      return true;
+    }
+  });
   const [history, setHistory] = useState([]); // [{role:'user'|'assistant', content}]
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
@@ -140,17 +217,48 @@ const Robo = forwardRef(function Robo(_, ref) {
     try { speechSynthesis.cancel(); } catch { /* not supported */ }
   }, [bot]);
 
-  // Speak a line with word-by-word highlight
-  const say = useCallback(
-    (line) => {
+  const toggleVoice = () => {
+    const next = !voiceOn;
+    if (!next) {
       stop();
+      sayId.current++; // anything still speaking won't come back to change the bubble
+      setIdx((i) => (i >= 0 ? text.split(' ').length : i)); // show the whole line at once
+    }
+    setVoiceOn(next);
+    try {
+      localStorage.setItem('robo-voice', next ? 'on' : 'off');
+    } catch {
+      /* storage blocked: the choice lasts for this page view */
+    }
+  };
+
+  const tourRef = useRef({ off: readTourOff(), seen: new Set(), spot: null, showing: false });
+  const readUntil = useRef(0);
+  const [spot, setSpot] = useState(null); // mirrors tourRef.current.spot for the chat's "Explain …" chip
+
+  // Speak a line with word-by-word highlight
+  const sayId = useRef(0);
+  const say = useCallback(
+    (line, opts = {}) => {
+      stop();
+      const id = ++sayId.current; // a cancelled earlier line must not finish this one
+      tourRef.current.showing = !!opts.tour;
       setBubbleOpen(true);
       setText(line);
+      if (opts.silent) {
+        // Tour lines are read, not spoken: show the whole line, give time to read it
+        setIdx(line.split(' ').length);
+        readUntil.current = Date.now() + Math.max(4500, line.split(' ').length * 300);
+        act('nod');
+        return;
+      }
+      readUntil.current = 0;
       setIdx(0);
       bot.talking = true;
       const words = line.split(' ');
       const n = words.length;
       const finish = () => {
+        if (id !== sayId.current) return;
         clearInterval(timer.current);
         bot.talking = false;
         setIdx(n);
@@ -168,6 +276,7 @@ const Robo = forwardRef(function Robo(_, ref) {
             const v = speechSynthesis.getVoices().find((x) => x.lang.toLowerCase().startsWith(lang.slice(0, 2)));
             if (v) u.voice = v;
             u.onboundary = (e) => {
+              if (id !== sayId.current) return;
               if (e.name && e.name !== 'word') return;
               gotBoundary = true;
               const before = line.slice(0, e.charIndex).trim();
@@ -267,7 +376,7 @@ const Robo = forwardRef(function Robo(_, ref) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next.slice(-8) }),
+        body: JSON.stringify({ messages: next.slice(-8), context: tourRef.current.spot || undefined }),
         signal: ctrl.signal,
       });
       if (res.status === 429) {
@@ -282,7 +391,18 @@ const Robo = forwardRef(function Robo(_, ref) {
     } finally {
       clearTimeout(giveUp);
     }
-    answer(reply || offlineAnswer(q));
+    answer(reply || (askingHere.current ? spotDetail(tourRef.current.spot) : '') || offlineAnswer(q));
+    askingHere.current = false;
+  };
+
+  // "Tell me more" about whatever is on screen right now
+  const askingHere = useRef(false);
+  const askHere = () => {
+    const spot = tourRef.current.spot;
+    if (!spot) return;
+    setChatOpen(true);
+    askingHere.current = true;
+    ask(`Tell me more about ${spotName(spot)}.`);
   };
 
   // The terminal's "ask <question>" command hands the question to Robo
@@ -297,16 +417,78 @@ const Robo = forwardRef(function Robo(_, ref) {
     return () => removeEventListener('robo-ask', onAsk);
   }, []);
 
+  // Scroll tour: when the visitor settles on a section or project card, Robo explains it.
+  // Each spot once per visit, text only. Closing a tour bubble turns the tour off for this visit.
+  const chatOpenRef = useRef(chatOpen);
+  chatOpenRef.current = chatOpen;
+  useEffect(() => {
+    let raf = 0;
+    let settle = 0;
+    const check = () => {
+      raf = 0;
+      const t = tourRef.current;
+      const spot = currentSpot();
+      if (spot === t.spot) return;
+      t.spot = spot;
+      setSpot(spot);
+      clearTimeout(settle);
+      if (!spot || t.off || t.seen.has(spot)) return;
+      // Wait until the visitor stops on it, so fast scrolling doesn't fire a line per section
+      settle = setTimeout(() => {
+        const busy =
+          chatOpenRef.current ||
+          (bot.talking && !t.showing) || // a newer tour line may cut in on an older one, never on an answer
+          document.documentElement.classList.contains('term-open') ||
+          /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+        if (t.off || t.spot !== spot || busy) return;
+        const line = tourLine(spot);
+        if (!line) return;
+        t.seen.add(spot);
+        // Browsers only allow speech after the visitor has clicked or tapped the page once;
+        // until then (or when muted) the line is shown as text
+        const activated = navigator.userActivation ? navigator.userActivation.hasBeenActive : true;
+        say(line, { tour: true, silent: !voiceOn || !activated });
+      }, 800);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    return () => {
+      removeEventListener('scroll', schedule);
+      removeEventListener('resize', schedule);
+      cancelAnimationFrame(raf);
+      clearTimeout(settle);
+    };
+  }, [bot, say, voiceOn]);
+
+  const stopTour = () => {
+    tourRef.current.off = true;
+    try {
+      sessionStorage.setItem(TOUR_OFF_KEY, '1');
+    } catch {
+      /* storage blocked: the tour still stops for this page view */
+    }
+  };
+
   // The bubble floats over the page, so it steps aside whenever it would cover a button,
   // link or form field. It stays put while Robo is talking, and comes back when he speaks again.
   const bubbleRef = useRef(null);
   useEffect(() => {
     const HIT = 'main a[href], main button, main input:not([tabindex="-1"]), main textarea, main select, footer a, footer button';
     let raf = 0;
+    let later = 0;
     const check = () => {
       raf = 0;
       const el = bubbleRef.current;
       if (!el || bot.talking) return;
+      if (Date.now() < readUntil.current) {
+        // Still reading a tour line: look again once the reading time is up
+        clearTimeout(later);
+        later = setTimeout(schedule, readUntil.current - Date.now() + 50);
+        return;
+      }
       const r = el.getBoundingClientRect();
       const covers = [...document.querySelectorAll(HIT)].some((x) => {
         const q = x.getBoundingClientRect();
@@ -319,15 +501,30 @@ const Robo = forwardRef(function Robo(_, ref) {
     };
     addEventListener('scroll', schedule, { passive: true });
     addEventListener('resize', schedule);
-    addEventListener('focusin', schedule);
+    const onFocus = (e) => {
+      // Tapping into a form field: a tour line shouldn't sit on top of it
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') && tourRef.current.showing && !e.target.closest('.chat')) {
+        readUntil.current = 0;
+        if (bot.talking) {
+          // Robo goes quiet and steps aside once the visitor starts filling in a form
+          stop();
+          sayId.current++;
+          setBubbleOpen(false);
+          return;
+        }
+      }
+      schedule();
+    };
+    addEventListener('focusin', onFocus);
     // Also check once the intro has lifted, and a few seconds after Robo finishes a line
     if (idx < 0) schedule();
     const t = setTimeout(schedule, idx >= 0 ? 3500 : 1800);
     return () => {
       removeEventListener('scroll', schedule);
       removeEventListener('resize', schedule);
-      removeEventListener('focusin', schedule);
+      removeEventListener('focusin', onFocus);
       clearTimeout(t);
+      clearTimeout(later);
       cancelAnimationFrame(raf);
     };
   }, [bot, bubbleOpen, idx]);
@@ -455,12 +652,8 @@ const Robo = forwardRef(function Robo(_, ref) {
             <div className="chat-head">
               <b>Ask Robo</b>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button className="icon-btn" type="button" aria-pressed={voiceOn} aria-label={voiceOn ? 'Mute voice' : 'Turn voice on'} onClick={() => { if (voiceOn) stop(); setVoiceOn((v) => !v); }}>
-                  {voiceOn ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z" /><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14" /></svg>
-                  ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z" /><path d="M22 9l-6 6M16 9l6 6" /></svg>
-                  )}
+                <button className="icon-btn" type="button" aria-pressed={voiceOn} aria-label={voiceOn ? 'Mute voice' : 'Turn voice on'} onClick={toggleVoice}>
+                  <VoiceIcon on={voiceOn} />
                 </button>
                 <button className="icon-btn" type="button" aria-label="Close chat" onClick={() => setChatOpen(false)}>×</button>
               </div>
@@ -476,6 +669,11 @@ const Robo = forwardRef(function Robo(_, ref) {
               <span ref={listEnd} />
             </div>
             <div className="chat-quick">
+              {spot && (
+                <button type="button" className="quick here" onClick={askHere} disabled={thinking}>
+                  Explain {spotName(spot)}
+                </button>
+              )}
               {robo.quick.map((x) => (
                 <button key={x.q} type="button" className="quick" onClick={() => askQuick(x)} disabled={thinking}>
                   {x.q}
@@ -526,7 +724,19 @@ const Robo = forwardRef(function Robo(_, ref) {
 
         {bubbleOpen && !chatOpen && (
           <div className="bubble" aria-live="polite" ref={bubbleRef}>
-            <button className="x" type="button" aria-label="Close bubble" onClick={() => { stop(); setBubbleOpen(false); }}>×</button>
+            <button
+              className="x"
+              type="button"
+              aria-label={tourRef.current.showing ? 'Stop the scroll tour' : 'Close bubble'}
+              title={tourRef.current.showing ? 'Stop the scroll tour' : undefined}
+              onClick={() => {
+                if (tourRef.current.showing) stopTour();
+                stop();
+                setBubbleOpen(false);
+              }}
+            >
+              ×
+            </button>
             <div>
               {words.map((w, i) => (
                 <span key={i}>
@@ -536,7 +746,22 @@ const Robo = forwardRef(function Robo(_, ref) {
               ))}
             </div>
             <div className="bar"><i style={{ width: pct + '%' }} /></div>
-            <button className="ask-btn" type="button" onClick={() => setChatOpen(true)}>Ask me anything →</button>
+            <div className="bubble-acts">
+              {tourRef.current.showing ? (
+                <button className="ask-btn" type="button" onClick={askHere}>Tell me more →</button>
+              ) : (
+                <button className="ask-btn" type="button" onClick={() => setChatOpen(true)}>Ask me anything →</button>
+              )}
+              <span className="bubble-tools">
+                <button className="voice-btn" type="button" aria-pressed={!voiceOn} onClick={toggleVoice}>
+                  <VoiceIcon on={voiceOn} size={13} />
+                  {voiceOn ? 'Mute' : 'Unmute'}
+                </button>
+                {tourRef.current.showing && (
+                  <button className="tour-off" type="button" onClick={() => { stopTour(); stop(); setBubbleOpen(false); }}>Stop tour</button>
+                )}
+              </span>
+            </div>
           </div>
         )}
       </div>
