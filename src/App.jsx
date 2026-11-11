@@ -10,11 +10,14 @@ import Footer from './components/Footer.jsx';
 import Robo from './components/Robo.jsx';
 import Terminal from './components/Terminal.jsx';
 import { useReveal } from './hooks/useReveal.js';
+import { useFx } from './hooks/useFx.js';
+import Stats from './components/Stats.jsx';
 
 export default function App() {
   // Robo exposes say()/act() so other sections can make him talk
   const roboRef = useRef(null);
   useReveal();
+  useFx();
 
   return (
     <>
@@ -22,6 +25,7 @@ export default function App() {
       <Navbar />
       <main className="wrap">
         <Hero onTalk={() => roboRef.current?.intro()} />
+        <Stats />
         <Experience />
         <Projects />
         <Skills />

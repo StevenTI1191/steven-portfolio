@@ -1,6 +1,7 @@
 import { profile } from '../data/profile.js';
 import Button from './Button.jsx';
 import AvatarCard from './AvatarCard.jsx';
+import Typewriter from './Typewriter.jsx';
 
 export default function Hero({ onTalk }) {
   const [first, last] = profile.name.split(' ');
@@ -30,6 +31,7 @@ export default function Hero({ onTalk }) {
             </span>
           ))}
         </h1>
+        <Typewriter prefix="I build" words={profile.typeRoles} />
         <p className="lead">
           {profile.lead} {profile.leadExtra}
         </p>

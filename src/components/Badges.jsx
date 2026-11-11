@@ -110,7 +110,7 @@ export default function Badges() {
         {featured.map((b, i) => (
           <button
             key={b.name}
-            className="badge dz rv"
+            className="badge dz spot rv"
             style={{ animationDelay: `${i * 0.06}s` }}
             type="button"
             onClick={(e) => {

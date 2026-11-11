@@ -45,7 +45,7 @@ export default function Skills() {
       <SkillSphere items={SPHERE_ITEMS} />
       <div className="tools">
         {toolGroups.map((g) => (
-          <div className="tool dz rv" key={g.title}>
+          <div className="tool dz spot rv" key={g.title}>
             <div className="tool-top">
               <b>{g.title}</b>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

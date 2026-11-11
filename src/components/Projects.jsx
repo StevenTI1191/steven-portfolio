@@ -6,7 +6,7 @@ function ProjectCard({ p, cardRef }) {
   const links = [p.github && { href: p.github, label: 'GitHub ↗' }, p.demo && { href: p.demo, label: 'Live demo ↗' }].filter(Boolean);
 
   return (
-    <article ref={cardRef} className={`sheet dz k${p.color.slice(1)}`}>
+    <article ref={cardRef} className={`sheet dz spot k${p.color.slice(1)}`}>
       <div className="sheet-head">
         <span className="tag">{p.tag}</span>
         <span className="meta">{p.meta}</span>

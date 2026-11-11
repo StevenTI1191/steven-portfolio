@@ -270,6 +270,25 @@ const Robo = forwardRef(function Robo(_, ref) {
     return () => removeEventListener('robo-ask', onAsk);
   }, []);
 
+  // Konami code: Robo shows off his dance moves
+  const sayRef = useRef(say);
+  sayRef.current = say;
+  useEffect(() => {
+    const timers = [];
+    const onKonami = () => {
+      act('spin');
+      timers.push(setTimeout(() => act('jump'), 1150));
+      timers.push(setTimeout(() => act('spin'), 2000));
+      timers.push(setTimeout(() => act('wave'), 3150));
+      sayRef.current('Up, up, down, down, left, right, left, right, B, A! You found my secret dance moves.');
+    };
+    addEventListener('konami', onKonami);
+    return () => {
+      removeEventListener('konami', onKonami);
+      timers.forEach(clearTimeout);
+    };
+  }, [act]);
+
   const words = text.split(' ');
   const pct = idx < 0 ? 0 : Math.min(100, Math.round(((idx + 1) / words.length) * 100));
 

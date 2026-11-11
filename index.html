@@ -8,6 +8,15 @@
     <meta name="author" content="Steven Lim" />
     <link rel="canonical" href="https://sldev.my.id/" />
     <meta name="theme-color" content="#ECECE7" />
+    <script>
+      // Apply a saved dark-mode choice before the first paint (light is the default)
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#121311');
+        }
+      } catch (e) {}
+    </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 

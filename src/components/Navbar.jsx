@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { profile } from '../data/profile.js';
 import { openTerminal } from './Terminal.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
 
 const LINKS = [
   { href: '#exp', label: 'Experience' },
@@ -76,6 +77,7 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="nav-actions">
+          <ThemeToggle />
           <button
             className="term-btn"
             type="button"

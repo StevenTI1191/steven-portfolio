@@ -52,7 +52,7 @@ export function run(raw) {
         lines: [
           head('Available commands'),
           ...HELP.map(([k, d]) => `  ${k.padEnd(20)}${d}`),
-          dim('  …and one secret command. Hint: sudo.'),
+          dim('  …and a couple of secrets. Hints: sudo, and a famous cheat code.'),
           dim('Tip: ↑/↓ for history, Tab to complete.'),
         ],
       };
@@ -121,6 +121,8 @@ export function run(raw) {
       return { lines: [new Date().toString()] };
     case 'echo':
       return { lines: [arg] };
+    case 'konami':
+      return { lines: [ok('↑ ↑ ↓ ↓ ← → ← → B A'), 'Cheat code accepted…'], action: { type: 'konami' } };
     case 'clear':
       return { lines: [], action: { type: 'clear' } };
     case 'exit':

@@ -10,8 +10,10 @@ export const profile = {
   location: 'Pekanbaru, Indonesia',
   timezone: 'Asia/Jakarta',
   status: 'Open to work',
-  lead: 'I build full-stack web apps with Laravel and React, backed by a solid grounding in networking.',
+  lead: 'Full-stack developer working with Laravel and React, backed by a solid grounding in networking.',
   leadExtra: 'Now a Technical Support Engineer at Apical, and exploring generative AI.',
+  // Phrases typed after "I build" in the hero
+  typeRoles: ['full-stack web apps', 'event management systems', 'AI-powered tools', 'networks that just work'],
   heroTags: ['Full-stack web', 'Laravel · React', 'Networking', 'Generative AI'],
   email: 'achensteven2005@gmail.com',
   linkedin: 'https://www.linkedin.com/in/steven-lim-22b6ba2b2',
@@ -181,3 +183,11 @@ export function buildKnowledge() {
   ];
   return lines.join('\n');
 }
+
+// Numbers in the strip under the hero (they count up when scrolled into view)
+export const stats = [
+  { n: projects.length, label: 'Projects built' },
+  { n: badges.length, label: 'Certifications' },
+  { n: 13, suffix: '+', label: 'ERP modules shipped' },
+  { n: profile.languages.length, label: 'Languages spoken' },
+];

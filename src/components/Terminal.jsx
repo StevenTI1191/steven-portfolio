@@ -157,6 +157,12 @@ export default function Terminal() {
           window.dispatchEvent(new CustomEvent('robo-ask', { detail: action.text }));
         }, 450);
         break;
+      case 'konami':
+        setTimeout(() => {
+          hide();
+          setTimeout(() => window.dispatchEvent(new Event('konami')), 250);
+        }, 500);
+        break;
       case 'hire':
         confetti();
         setTimeout(() => {

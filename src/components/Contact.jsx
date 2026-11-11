@@ -28,7 +28,7 @@ export default function Contact() {
       <p>{profile.availability}</p>
 
       <div className="contact-grid">
-        <div className="contact-card">
+        <div className="contact-card spot">
           <span className="contact-ico"><MailIcon size={22} /></span>
           <span className="contact-txt">
             <b>Gmail</b>
@@ -40,7 +40,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <a className="contact-card" href={profile.linkedin} target="_blank" rel="noopener">
+        <a className="contact-card spot" href={profile.linkedin} target="_blank" rel="noopener">
           <span className="contact-ico"><LinkedInIcon size={22} /></span>
           <span className="contact-txt">
             <b>LinkedIn</b>
@@ -51,7 +51,7 @@ export default function Contact() {
           </div>
         </a>
 
-        <a className="contact-card" href={profile.github} target="_blank" rel="noopener">
+        <a className="contact-card spot" href={profile.github} target="_blank" rel="noopener">
           <span className="contact-ico"><GitHubIcon size={22} /></span>
           <span className="contact-txt">
             <b>GitHub</b>

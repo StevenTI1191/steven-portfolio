@@ -26,7 +26,7 @@ export default function Experience() {
       </div>
       <div className="tl" ref={tl}>
         {experience.map((e) => (
-          <div className={`job dz rv${e.now ? ' now' : ''}`} key={e.title}>
+          <div className={`job dz spot rv${e.now ? ' now' : ''}`} key={e.title}>
             <span className="dot" aria-hidden="true" />
             {e.now && <span className="now-tag">Now</span>}
             <span className="when">{e.when}</span>
