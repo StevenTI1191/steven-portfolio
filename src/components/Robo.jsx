@@ -527,6 +527,25 @@ const Robo = forwardRef(function Robo(_, ref) {
     };
   }, [big, shown, act]);
 
+  // Keyboard: opening the chat moves focus into it (the panel itself, so phones don't pop up
+  // the keyboard), and closing it returns focus to whatever opened it
+  const chatRef = useRef(null);
+  const openedFrom = useRef(null);
+  useEffect(() => {
+    if (chatOpen) {
+      openedFrom.current = document.activeElement;
+      chatRef.current?.focus({ preventScroll: true });
+      return;
+    }
+    const back = openedFrom.current;
+    openedFrom.current = null;
+    if (back && back !== document.body && back.isConnected && chatRef.current === null) {
+      // only when focus was inside the chat (it has just been removed) or nowhere in particular
+      const active = document.activeElement;
+      if (!active || active === document.body) back.focus?.({ preventScroll: true });
+    }
+  }, [chatOpen]);
+
   // The terminal's "ask <question>" command hands the question to Robo
   const askRef = useRef(ask);
   askRef.current = ask;
@@ -811,7 +830,19 @@ const Robo = forwardRef(function Robo(_, ref) {
 
       <div className="dock-col">
         {chatOpen && (
-          <div className="chat" role="dialog" aria-label={`Chat with ${robo.name}`}>
+          <div
+            className="chat"
+            role="dialog"
+            aria-label={`Chat with ${robo.name}`}
+            ref={chatRef}
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                setChatOpen(false);
+              }
+            }}
+          >
             <div className="chat-head">
               <b>Ask {robo.name}</b>
               <div style={{ display: 'flex', gap: 6 }}>

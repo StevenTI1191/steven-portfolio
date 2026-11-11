@@ -8,7 +8,7 @@ function metaLine(b) {
 }
 
 function BadgeArt({ b }) {
-  if (b.image) return <img src={b.image} alt="" />;
+  if (b.image) return <img src={b.image} alt="" loading="lazy" decoding="async" />;
   const ring = { fill: 'none', stroke: '#fff', strokeOpacity: 0.5, strokeWidth: 2 };
   const label = (
     <text x="50" y="57" textAnchor="middle" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize={b.short.length > 3 ? 18 : 22} fill="#fff">
@@ -150,7 +150,7 @@ export default function Badges() {
               const body = (
                 <>
                   {b.image || b.logo ? (
-                    <img className={`cert-thumb${b.image ? '' : ' is-logo'}`} src={b.image || b.logo} alt="" />
+                    <img className={`cert-thumb${b.image ? '' : ' is-logo'}`} src={b.image || b.logo} alt="" loading="lazy" decoding="async" />
                   ) : (
                     <span className="cert-dot" aria-hidden="true">{b.short}</span>
                   )}

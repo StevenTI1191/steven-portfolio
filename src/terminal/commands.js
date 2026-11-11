@@ -29,14 +29,13 @@ export const HELP = [
   ['certs', 'licenses and certifications'],
   ['experience', 'where Steven has worked'],
   ['contact', 'email and links (copies the email)'],
-  ['cv', 'download the CV'],
   ['github / linkedin', 'open the profile'],
   ['ask <question>', `ask ${robo.name} anything`],
   ['ls, cat <file>', 'look around'],
   ['clear, exit', 'tidy up or close'],
 ];
 
-export const COMMAND_NAMES = ['help', 'whoami', 'about', 'skills', 'projects', 'open', 'certs', 'experience', 'contact', 'cv', 'github', 'linkedin', 'ask', 'ls', 'cat', 'clear', 'exit', 'sudo', 'date', 'echo'];
+export const COMMAND_NAMES = ['help', 'whoami', 'about', 'skills', 'projects', 'open', 'certs', 'experience', 'contact', 'github', 'linkedin', 'ask', 'ls', 'cat', 'clear', 'exit', 'sudo', 'date', 'echo'];
 
 // Returns { lines, action } where action is something the UI should do
 export function run(raw) {
@@ -101,8 +100,6 @@ export function run(raw) {
         lines: FILES['contact.txt'](),
         action: { type: 'copy', text: profile.email },
       };
-    case 'cv':
-      return { lines: [ok('↓ Downloading Steven-Lim-CV.pdf…')], action: { type: 'download', href: profile.cv } };
     case 'github':
     case 'linkedin':
       return { lines: [ok(`→ Opening ${c === 'github' ? 'GitHub' : 'LinkedIn'}…`)], action: { type: 'link', href: profile[c] } };
@@ -110,11 +107,10 @@ export function run(raw) {
       if (!arg) return { lines: [err('ask: type a question, e.g. ask what did Steven build?')] };
       return { lines: [ok(`→ Passing your question to ${robo.name}…`)], action: { type: 'ask', text: arg } };
     case 'ls':
-      return { lines: [`${Object.keys(FILES).join('   ')}   projects/   cv.pdf`] };
+      return { lines: [`${Object.keys(FILES).join('   ')}   projects/`] };
     case 'cat': {
       if (!arg) return { lines: [err('cat: which file? Try "ls".')] };
       if (FILES[arg]) return { lines: FILES[arg]() };
-      if (arg === 'cv.pdf') return { lines: [dim('That one is binary. Try "cv" to download it.')] };
       return { lines: [err(`cat: ${arg}: No such file`)] };
     }
     case 'date':
@@ -145,7 +141,7 @@ export function complete(value) {
   const v = value.replace(/^\s+/, '');
   if (/^cat\s+/i.test(v)) {
     const part = v.replace(/^cat\s+/i, '');
-    const hit = [...Object.keys(FILES), 'cv.pdf'].filter((f) => f.startsWith(part));
+    const hit = Object.keys(FILES).filter((f) => f.startsWith(part));
     return hit.length === 1 ? `cat ${hit[0]}` : value;
   }
   if (/\s/.test(v)) return value;

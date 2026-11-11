@@ -636,3 +636,6 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #bot:not(.ready){pointer-events:none}
 /* while Xiao Hei is big during the entrance, taps go to the page underneath */
 .dock.big #bot,.dock.big .robo-fallback{pointer-events:none}
+/* the chat panel takes focus when it opens; keyboard users get a visible ring, mouse users don't */
+.chat:focus{outline:none}
+.chat:focus-visible{outline:3px solid var(--accent);outline-offset:3px}

@@ -23,7 +23,6 @@ const CONNECT = [
   { href: profile.github, label: 'GitHub', ext: true },
   { href: profile.linkedin, label: 'LinkedIn', ext: true },
   { href: `mailto:${profile.email}`, label: 'Email' },
-  { href: profile.cv, label: 'Download CV', download: 'Steven-Lim-CV.pdf' },
 ];
 
 export default function Footer() {

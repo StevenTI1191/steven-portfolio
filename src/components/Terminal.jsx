@@ -6,7 +6,7 @@ import { run, complete } from '../terminal/commands.js';
 export const openTerminal = () => window.dispatchEvent(new Event('open-terminal'));
 
 const PROMPT = 'steven@sldev:~$';
-const QUICK = ['help', 'whoami', 'projects', 'skills', 'contact', 'cv', 'sudo hire steven'];
+const QUICK = ['help', 'whoami', 'projects', 'skills', 'contact', 'sudo hire steven'];
 const WELCOME = [
   { t: `Welcome to ${profile.name}'s terminal.`, c: 'head' },
   { t: 'Type "help" to see the commands, or tap one below.', c: 'dim' },
@@ -136,15 +136,6 @@ export default function Terminal() {
         } catch {
           note('Copy the address above.', 'dim');
         }
-        break;
-      }
-      case 'download': {
-        const a = document.createElement('a');
-        a.href = action.href;
-        a.download = 'Steven-Lim-CV.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
         break;
       }
       case 'link':

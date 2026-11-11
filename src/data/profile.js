@@ -18,8 +18,6 @@ export const profile = {
   email: 'achensteven2005@gmail.com',
   linkedin: 'https://www.linkedin.com/in/steven-lim-22b6ba2b2',
   github: 'https://github.com/StevenTI1191',
-  // Put your CV in /public and point to it here (replace the file to update it)
-  cv: '/Steven-Lim-CV.pdf',
   // 3D avatar in the hero (transparent background). Set to '' to hide the card.
   avatar: '/avatar.webp',
   languages: ['English (professional working)', 'Indonesian (native)', 'Chinese (full professional)'],
@@ -117,19 +115,19 @@ export const toolGroups = [
 ];
 
 // category must match one of the badgeFilters ids
-// image: put your badge file in /public/badges and write '/badges/your-file.png'.
+// image: put your badge file in /public/badges and write '/badges/your-file.webp'.
 //        Leave empty to show a generated placeholder shape.
 // shape: 'hex' | 'circle' | 'shield' | 'diamond' (placeholder only)
 export const badges = [
-  { name: 'AWS SimuLearn: AI Practitioner', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '/badges/aws-simulearn-ai-practitioner.png', shape: 'hex', color: '#EA580C', short: 'AWS' },
-  { name: 'AWS Cloud Quest: Generative AI Architect', issuer: 'Amazon Web Services (AWS)', year: '[Year]', category: 'cloud', link: '', image: '/badges/aws-cloud-quest-genai-architect.png', shape: 'hex', color: '#92400E', short: 'AWS' },
-  { name: 'Oracle Certified Foundations Associate: Agentic AI', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '/badges/oracle-agentic-ai-foundations.png', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
-  { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: 'Oct 2026', category: 'ai', link: '', image: '', logo: '/logos/anthropic.png', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
-  { name: 'Technical Support Fundamentals', issuer: 'Google', year: 'May 2026', category: 'other', link: '', image: '', logo: '/logos/google.png', shape: 'circle', color: '#4285F4', short: 'G' },
-  { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '/badges/ec-council-ehe.png', shape: 'shield', color: '#DC2626', short: 'EHE' },
-  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/cisco.png', shape: 'hex', color: '#2563EB', short: 'CCNA' },
-  { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/mikrotik.png', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
-  { name: 'Junior Network Administrator', issuer: 'BNSP', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/bnsp.png', shape: 'shield', color: '#0F766E', short: 'JNA' },
+  { name: 'AWS SimuLearn: AI Practitioner', issuer: 'Amazon Web Services (AWS)', year: 'Nov 2026', category: 'cloud', link: '', image: '/badges/aws-simulearn-ai-practitioner.webp', shape: 'hex', color: '#EA580C', short: 'AWS' },
+  { name: 'AWS Cloud Quest: Generative AI Architect', issuer: 'Amazon Web Services (AWS)', year: '[Year]', category: 'cloud', link: '', image: '/badges/aws-cloud-quest-genai-architect.webp', shape: 'hex', color: '#92400E', short: 'AWS' },
+  { name: 'Oracle Certified Foundations Associate: Agentic AI', issuer: 'Oracle', year: 'Oct 2026 · valid until Oct 2028', category: 'ai', link: '', image: '/badges/oracle-agentic-ai-foundations.webp', shape: 'circle', color: '#C2410C', short: 'OCI AI' },
+  { name: 'Claude Academy: Claude 101', issuer: 'Anthropic', year: 'Oct 2026', category: 'ai', link: '', image: '', logo: '/logos/anthropic.webp', shape: 'circle', color: '#7C3AED', short: 'AI 101' },
+  { name: 'Technical Support Fundamentals', issuer: 'Google', year: 'May 2026', category: 'other', link: '', image: '', logo: '/logos/google.webp', shape: 'circle', color: '#4285F4', short: 'G' },
+  { name: 'Ethical Hacking Essentials (EHE)', issuer: 'EC-Council', year: '[Year]', category: 'security', link: '', image: '/badges/ec-council-ehe.webp', shape: 'shield', color: '#DC2626', short: 'EHE' },
+  { name: 'CCNA: Switching, Routing, and Wireless Essentials', issuer: 'Cisco Networking Academy', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/cisco.webp', shape: 'hex', color: '#2563EB', short: 'CCNA' },
+  { name: 'MikroTik Certified Network Associate', issuer: 'MikroTik', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/mikrotik.webp', shape: 'diamond', color: '#16A34A', short: 'MTCNA' },
+  { name: 'Junior Network Administrator', issuer: 'BNSP', year: '[Year]', category: 'network', link: '', image: '', logo: '/logos/bnsp.webp', shape: 'shield', color: '#0F766E', short: 'JNA' },
 ];
 
 export const badgeFilters = [
@@ -144,11 +142,11 @@ export const badgeFilters = [
 // Experience timeline. `org` + `logo` (in public/logos) show beside each role;
 // without a logo, `initials` are shown in a small tile instead.
 export const experience = [
-  { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', org: 'Orbit Future Academy', logo: '/logos/orbit.png', logoFill: true, text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
-  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
-  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
-  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.png', text: 'Part-time in Pekanbaru. Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
-  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.png', text: 'Freelance in Pekanbaru. Developed automated e-ticketing workflows and a seat selection system.' },
+  { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', org: 'Orbit Future Academy', logo: '/logos/orbit.webp', logoFill: true, text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
+  { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', org: 'Apical', logo: '/logos/apical.webp', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
+  { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', org: 'Apical', logo: '/logos/apical.webp', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
+  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.webp', text: 'Part-time in Pekanbaru. Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
+  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.webp', text: 'Freelance in Pekanbaru. Developed automated e-ticketing workflows and a seat selection system.' },
   { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', org: 'Politeknik Caltex Riau', initials: 'PCR', text: 'Bachelor of Applied Science, Information Technology.' },
 ];
 

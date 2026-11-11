@@ -106,12 +106,12 @@ export default function AvatarCard() {
         <div className="avatar-halo" aria-hidden="true" />
         <div className="avatar-figure" ref={figRef}>
           {geo && <Ring side="back" geo={geo} />}
-          <img src={profile.avatar} alt={`3D avatar of ${profile.name}`} width="606" height="689" />
+          <img src={profile.avatar} alt={`3D avatar of ${profile.name}`} width="606" height="689" fetchPriority="high" decoding="async" />
           {geo && <Ring side="front" geo={geo} />}
         </div>
       </div>
       {floating.map((b, i) => (
-        <img key={b.name} className={`avatar-badge b${i + 1}`} src={b.image} alt="" aria-hidden="true" />
+        <img key={b.name} className={`avatar-badge b${i + 1}`} src={b.image} alt="" aria-hidden="true" decoding="async" />
       ))}
       <span className="avatar-tag">
         <i aria-hidden="true" />
