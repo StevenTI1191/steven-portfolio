@@ -8,3 +8,9 @@ createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>
 );
+
+// Lift the intro screen once the page has painted and the fonts are in (or after 1.5s at most)
+requestAnimationFrame(() => {
+  const fonts = document.fonts?.ready ?? Promise.resolve();
+  Promise.race([fonts, new Promise((r) => setTimeout(r, 1500))]).then(() => window.__introDone?.());
+});
