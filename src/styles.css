@@ -280,6 +280,8 @@ footer{display:flex;flex-direction:column;gap:14px;padding-top:8px}
 @media (hover:none){.claim:hover{transform:none}}
 
 /* React additions */
+#bot{opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#bot.ready{opacity:1;transform:none}
 .sphere-wrap{border-radius:32px}
 .sphere{position:relative;overflow:hidden;border-radius:30px;height:clamp(340px,52vw,460px);cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;background:radial-gradient(rgba(17,17,17,.13) 1px,transparent 1px) 0 0/16px 16px}
 .sphere:active{cursor:grabbing}

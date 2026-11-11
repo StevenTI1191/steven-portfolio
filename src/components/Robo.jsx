@@ -1,6 +1,29 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { robo } from '../data/profile.js';
-import { createRobotScene } from './robotScene.js';
+
+// Free-typed questions per visitor per day (quick questions don't count).
+// The server has its own per-minute limit; this just keeps casual spam off the AI quota.
+const DAILY_AI_LIMIT = 20;
+const QUOTA_KEY = 'robo-ai-quota';
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+function readQuota() {
+  try {
+    const q = JSON.parse(localStorage.getItem(QUOTA_KEY) || 'null');
+    return q && q.day === today() ? q.count : 0;
+  } catch {
+    return 0;
+  }
+}
+function bumpQuota() {
+  try {
+    localStorage.setItem(QUOTA_KEY, JSON.stringify({ day: today(), count: readQuota() + 1 }));
+  } catch {
+    /* storage blocked: the server limit still applies */
+  }
+}
 
 // Picks an offline answer when the AI endpoint is unavailable
 function offlineAnswer(q) {
@@ -18,6 +41,7 @@ const Robo = forwardRef(function Robo(_, ref) {
   const canvasRef = useRef(null);
   const bot = useRef({ talking: false, act: null, actT: 0, look: { x: 0, y: 0 }, scrollKick: 0 }).current;
   const [has3d, setHas3d] = useState(true);
+  const [ready3d, setReady3d] = useState(false);
   const [text, setText] = useState(robo.greeting);
   const [idx, setIdx] = useState(-1);
   const [bubbleOpen, setBubbleOpen] = useState(true);
@@ -34,11 +58,36 @@ const Robo = forwardRef(function Robo(_, ref) {
     bot.actT = 0;
   }, [bot]);
 
-  // 3D scene
+  // 3D scene. Three.js is large, so it loads in its own file only after the page
+  // has rendered and the browser is idle. Visitors with Data Saver on get the light button.
   useEffect(() => {
-    const cleanup = createRobotScene(canvasRef.current, bot);
-    if (!cleanup) setHas3d(false);
-    return () => cleanup?.();
+    if (navigator.connection?.saveData) {
+      setHas3d(false);
+      return;
+    }
+    let cancelled = false;
+    let cleanup = null;
+    const start = () => {
+      import('./robotScene.js')
+        .then(({ createRobotScene }) => {
+          if (cancelled || !canvasRef.current) return;
+          cleanup = createRobotScene(canvasRef.current, bot);
+          if (cleanup) setReady3d(true);
+          else setHas3d(false);
+        })
+        .catch(() => !cancelled && setHas3d(false));
+    };
+    const idle = window.requestIdleCallback
+      ? (fn) => window.requestIdleCallback(fn, { timeout: 2500 })
+      : (fn) => setTimeout(fn, 1200);
+    const schedule = () => idle(start);
+    if (document.readyState === 'complete') schedule();
+    else addEventListener('load', schedule, { once: true });
+    return () => {
+      cancelled = true;
+      removeEventListener('load', schedule);
+      cleanup?.();
+    };
   }, [bot]);
 
   // Robo looks toward the pointer and leans when the page scrolls
@@ -143,6 +192,21 @@ const Robo = forwardRef(function Robo(_, ref) {
     listEnd.current?.scrollIntoView({ block: 'nearest' });
   }, [history, thinking]);
 
+  const answer = (reply) => {
+    setHistory((h) => [...h, { role: 'assistant', content: reply }]);
+    setThinking(false);
+    act('wave');
+    say(reply);
+  };
+
+  // Quick questions answer instantly from profile.js and never use the AI quota
+  const askQuick = (item) => {
+    if (thinking) return;
+    setHistory((h) => [...h, { role: 'user', content: item.q }]);
+    act('nod');
+    answer(item.a);
+  };
+
   const ask = async (question) => {
     const q = question.trim();
     if (!q || thinking) return;
@@ -151,6 +215,12 @@ const Robo = forwardRef(function Robo(_, ref) {
     setInput('');
     setThinking(true);
     act('nod');
+
+    if (readQuota() >= DAILY_AI_LIMIT) {
+      answer(`I've answered a lot of questions today, so I'm resting my AI brain. ${offlineAnswer(q)}`);
+      return;
+    }
+
     let reply = '';
     try {
       const res = await fetch('/api/chat', {
@@ -158,17 +228,17 @@ const Robo = forwardRef(function Robo(_, ref) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: next.slice(-8) }),
       });
-      if (!res.ok) throw new Error('bad status');
-      const data = await res.json();
-      reply = (data.reply || '').trim();
+      if (res.status === 429) {
+        reply = "You're asking faster than I can think! Give me a minute, or tap a quick question.";
+      } else if (res.ok) {
+        const data = await res.json();
+        reply = (data.reply || '').trim();
+        if (reply) bumpQuota();
+      }
     } catch {
       reply = '';
     }
-    if (!reply) reply = offlineAnswer(q);
-    setHistory((h) => [...h, { role: 'assistant', content: reply }]);
-    setThinking(false);
-    act('wave');
-    say(reply);
+    answer(reply || offlineAnswer(q));
   };
 
   const words = text.split(' ');
@@ -180,6 +250,7 @@ const Robo = forwardRef(function Robo(_, ref) {
         <canvas
           ref={canvasRef}
           id="bot"
+          className={ready3d ? 'ready' : undefined}
           role="button"
           tabIndex={0}
           aria-label="Robo, a 3D assistant. Tap to chat."
@@ -232,7 +303,7 @@ const Robo = forwardRef(function Robo(_, ref) {
             </div>
             <div className="chat-quick">
               {robo.quick.map((x) => (
-                <button key={x.q} type="button" className="quick" onClick={() => ask(x.q)} disabled={thinking}>
+                <button key={x.q} type="button" className="quick" onClick={() => askQuick(x)} disabled={thinking}>
                   {x.q}
                 </button>
               ))}

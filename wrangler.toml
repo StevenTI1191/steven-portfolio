@@ -10,3 +10,13 @@ binding = "ASSETS"
 # Workers AI binding used by functions/api/chat.js
 [ai]
 binding = "AI"
+
+# Per-visitor limit for Robo's AI chat: at most 6 questions per minute per IP.
+# Approximate (counted per Cloudflare location). Needs Wrangler 4.36 or newer.
+[[ratelimits]]
+name = "CHAT_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 6
+  period = 60
