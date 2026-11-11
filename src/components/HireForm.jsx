@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react';
 import { profile } from '../data/profile.js';
 
-const TYPES = ['Full-time', 'Internship', 'Freelance project', 'Something else'];
-const EMPTY = { name: '', email: '', company: '', type: TYPES[0], message: '', website: '' };
+const EMPTY = { name: '', email: '', company: '', message: '', website: '' };
 
 function check(f) {
   const e = {};
@@ -88,24 +87,13 @@ export default function HireForm() {
           {errors.name && <span className="field-err" id="hire-name-err">{errors.name}</span>}
         </div>
         <div className="field">
-          <label htmlFor="hire-email">Work email</label>
+          <label htmlFor="hire-email">Your email</label>
           <input id="hire-email" type="email" value={form.email} onChange={set('email')} autoComplete="email" placeholder="rina@company.com" aria-invalid={!!errors.email} aria-describedby={errors.email ? 'hire-email-err' : undefined} maxLength={120} />
           {errors.email && <span className="field-err" id="hire-email-err">{errors.email}</span>}
         </div>
-        <div className="field">
+        <div className="field wide">
           <label htmlFor="hire-company">Company <span className="opt">(optional)</span></label>
           <input id="hire-company" value={form.company} onChange={set('company')} autoComplete="organization" placeholder="PT Maju Bersama" maxLength={100} />
-        </div>
-        <div className="field">
-          <span className="field-label" id="hire-type-label">Looking for</span>
-          <div className="seg" role="radiogroup" aria-labelledby="hire-type-label">
-            {TYPES.map((t) => (
-              <label key={t} className={`seg-opt${form.type === t ? ' on' : ''}`}>
-                <input type="radio" name="hire-type" value={t} checked={form.type === t} onChange={set('type')} />
-                {t}
-              </label>
-            ))}
-          </div>
         </div>
         <div className="field wide">
           <label htmlFor="hire-message">Message</label>

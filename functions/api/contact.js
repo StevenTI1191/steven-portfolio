@@ -11,7 +11,6 @@
 import { profile } from '../../src/data/profile.js';
 
 const FROM = 'portfolio@sldev.my.id'; // any address on the domain with Email Routing on
-const TYPES = ['Full-time', 'Internship', 'Freelance project', 'Something else'];
 const LIMITS = { name: 80, email: 120, company: 100, message: 3000 };
 const FALLBACK_PER_MIN = 3;
 
@@ -59,7 +58,6 @@ export function validate(body) {
     name: s(body?.name, LIMITS.name).replace(/\n/g, ' '),
     email: s(body?.email, LIMITS.email).replace(/\s/g, ''),
     company: s(body?.company, LIMITS.company).replace(/\n/g, ' '),
-    type: TYPES.includes(body?.type) ? body.type : TYPES[0],
     message: s(body?.message, LIMITS.message),
   };
   const errors = {};
@@ -79,14 +77,13 @@ const wrap76 = (s) => s.replace(/.{1,76}/g, '$&\r\n');
 
 // Builds a plain-text MIME email (UTF-8, base64 body and subject)
 export function buildEmail({ data, to, from, now = new Date(), id = crypto.randomUUID() }) {
-  const subject = `Hiring inquiry: ${data.type} from ${data.name}${data.company ? ` (${data.company})` : ''}`;
+  const subject = `Hiring inquiry from ${data.name}${data.company ? ` (${data.company})` : ''}`;
   const body = [
     `New message from your portfolio's hire form.`,
     '',
     `Name:     ${data.name}`,
     `Email:    ${data.email}`,
     `Company:  ${data.company || '-'}`,
-    `Looking for: ${data.type}`,
     '',
     'Message:',
     data.message,
