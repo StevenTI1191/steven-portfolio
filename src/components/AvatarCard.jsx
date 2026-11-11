@@ -39,7 +39,8 @@ export default function AvatarCard() {
   const cardRef = useRef(null);
   const figRef = useRef(null);
   const [geo, setGeo] = useState(null);
-  const floating = badges.filter((b) => b.image).slice(0, 2);
+  // Every certification with a badge image floats around the card (up to 4 spots)
+  const floating = badges.filter((b) => b.image).slice(0, 4);
 
   // Size the ring from the figure width, so it fits the head at every screen size
   useEffect(() => {
