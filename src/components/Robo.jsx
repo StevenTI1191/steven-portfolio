@@ -721,7 +721,7 @@ const Robo = forwardRef(function Robo(_, ref) {
             className={ready3d ? 'ready' : undefined}
             role="button"
             tabIndex={0}
-            aria-label="Robo, a 3D assistant. Tap to chat."
+            aria-label={`${robo.name}, a 3D assistant. Tap to chat.`}
             onClick={() => {
               act('jump');
               setChatOpen(true);
@@ -738,7 +738,7 @@ const Robo = forwardRef(function Robo(_, ref) {
         )}
 
         {!has3d && (
-          <button className="robo-fallback" type="button" aria-label="Chat with Robo" onClick={() => setChatOpen(true)}>
+          <button className="robo-fallback" type="button" aria-label={`Chat with ${robo.name}`} onClick={() => setChatOpen(true)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="4" /><path d="M12 3v4M9 13h.01M15 13h.01" /></svg>
           </button>
         )}
@@ -747,8 +747,8 @@ const Robo = forwardRef(function Robo(_, ref) {
           className="dock-voice"
           type="button"
           aria-pressed={!voiceOn}
-          aria-label={voiceOn ? "Mute Robo's voice" : "Unmute Robo's voice"}
-          title={voiceOn ? "Mute Robo's voice" : "Unmute Robo's voice"}
+          aria-label={voiceOn ? `Mute ${robo.name}'s voice` : `Unmute ${robo.name}'s voice`}
+          title={voiceOn ? `Mute ${robo.name}'s voice` : `Unmute ${robo.name}'s voice`}
           onClick={toggleVoice}
         >
           <VoiceIcon on={voiceOn} size={15} />
@@ -757,9 +757,9 @@ const Robo = forwardRef(function Robo(_, ref) {
 
       <div className="dock-col">
         {chatOpen && (
-          <div className="chat" role="dialog" aria-label="Chat with Robo">
+          <div className="chat" role="dialog" aria-label={`Chat with ${robo.name}`}>
             <div className="chat-head">
-              <b>Ask Robo</b>
+              <b>Ask {robo.name}</b>
               <div style={{ display: 'flex', gap: 6 }}>
                 <button className="icon-btn" type="button" aria-pressed={voiceOn} aria-label={voiceOn ? 'Mute voice' : 'Turn voice on'} onClick={toggleVoice}>
                   <VoiceIcon on={voiceOn} />
@@ -773,7 +773,7 @@ const Robo = forwardRef(function Robo(_, ref) {
                 <div key={i} className={`chat-msg ${m.role}`}>{m.content}</div>
               ))}
               {thinking && (
-                <div className="chat-msg assistant typing" aria-label="Robo is thinking"><i /><i /><i /></div>
+                <div className="chat-msg assistant typing" aria-label={`${robo.name} is thinking`}><i /><i /><i /></div>
               )}
               <span ref={listEnd} />
             </div>

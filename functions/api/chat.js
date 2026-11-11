@@ -1,4 +1,4 @@
-// Robo's chat endpoint: POST /api/chat
+// The assistant's chat endpoint (Xiao Hei): POST /api/chat
 // Uses the Workers AI binding "AI" (no API key needed: it runs inside your Cloudflare account).
 //
 // Protection against people burning through the free AI quota:
@@ -8,7 +8,7 @@
 //   3. Size caps on the conversation and the answer.
 // The page also keeps a daily per-browser cap and answers quick questions without the AI.
 
-import { buildKnowledge, profile, projects } from '../../src/data/profile.js';
+import { buildKnowledge, profile, projects, robo } from '../../src/data/profile.js';
 
 // Llama 4 Scout: officially supports 12 languages (incl. English, German, Indonesian) and costs
 // about the same per question as Llama 3.1 8B. The 8B model is kept as a backup if Scout fails.
@@ -19,7 +19,7 @@ const MAX_CHARS = 600;
 const MAX_TOTAL_CHARS = 2400;
 const FALLBACK_LIMIT = 6; // per IP per minute, used only without the CHAT_LIMITER binding
 
-const SYSTEM_PROMPT = `You are Robo, a friendly robot assistant on ${profile.name}'s portfolio website.
+const SYSTEM_PROMPT = `You are ${robo.name}, a friendly robot assistant on ${profile.name}'s portfolio website. When you reply in Chinese, call yourself ${robo.nameZh}.
 Answer questions about ${profile.name} using ONLY the facts below. Keep answers short: 1 to 3 sentences, plain text, no markdown.
 If something is not in the facts, or a fact is still a placeholder in [square brackets], say you don't know that yet and suggest contacting ${profile.name} through the contact section.
 Never invent projects, numbers, employers, or certificates. Politely decline questions unrelated to ${profile.name}.

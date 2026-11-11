@@ -1,7 +1,7 @@
 // Terminal commands. Everything is read from profile.js, so the terminal
 // always matches the page. Pure logic only (no React), so it can be tested on its own.
 
-import { profile, projects, toolGroups, badges, experience } from '../data/profile.js';
+import { profile, projects, toolGroups, badges, experience, robo } from '../data/profile.js';
 
 // A line is a string, or { t: text, c: 'dim' | 'ok' | 'err' | 'accent' | 'head' }
 const dim = (t) => ({ t, c: 'dim' });
@@ -31,7 +31,7 @@ export const HELP = [
   ['contact', 'email and links (copies the email)'],
   ['cv', 'download the CV'],
   ['github / linkedin', 'open the profile'],
-  ['ask <question>', 'ask Robo anything'],
+  ['ask <question>', `ask ${robo.name} anything`],
   ['ls, cat <file>', 'look around'],
   ['clear, exit', 'tidy up or close'],
 ];
@@ -108,7 +108,7 @@ export function run(raw) {
       return { lines: [ok(`→ Opening ${c === 'github' ? 'GitHub' : 'LinkedIn'}…`)], action: { type: 'link', href: profile[c] } };
     case 'ask':
       if (!arg) return { lines: [err('ask: type a question, e.g. ask what did Steven build?')] };
-      return { lines: [ok('→ Passing your question to Robo…')], action: { type: 'ask', text: arg } };
+      return { lines: [ok(`→ Passing your question to ${robo.name}…`)], action: { type: 'ask', text: arg } };
     case 'ls':
       return { lines: [`${Object.keys(FILES).join('   ')}   projects/   cv.pdf`] };
     case 'cat': {

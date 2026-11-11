@@ -1,5 +1,5 @@
 // All page content lives here. Edit this file to update the site;
-// the components and Robo's AI context both read from it.
+// the components and the assistant's AI context both read from it.
 // Anything in [square brackets] is a placeholder to replace with your real info.
 
 export const profile = {
@@ -153,11 +153,13 @@ export const experience = [
   { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', org: 'Politeknik Caltex Riau', initials: 'PCR', text: 'Bachelor of Applied Science, Information Technology.' },
 ];
 
-// Robo: quick questions and the offline answers used when the AI is unavailable
+// The assistant (Xiao Hei): quick questions and the offline answers used when the AI is unavailable
 export const robo = {
-  greeting: "Hi! I'm Robo, Steven's assistant. Ask me anything about him.",
+  name: 'Xiao Hei', // shown in English and Indonesian
+  nameZh: '小黑', // used when replying in Chinese
+  greeting: "Hi! I'm Xiao Hei, Steven's assistant. Ask me anything about him.",
   intro: 'Hello! This is Steven Lim, an Information Technology student at Politeknik Caltex Riau. He builds full-stack web apps with Laravel and React, and he knows networking too. Scroll down to see his work.',
-  poke: "Hey, that tickles! I'm Robo, Steven's assistant. Nice to meet you!",
+  poke: "Hey, that tickles! I'm Xiao Hei, Steven's assistant. Nice to meet you!",
   terminalHint: 'Psst… Steven has a hidden terminal. Press ` on your keyboard, or tap >_ at the top.',
   quick: [
     { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau. Right now he is a Technical Support Engineer intern at Apical and an AWS re/start learner at Orbit Future Academy. Before that, he built web systems for Laksamana Group.' },
@@ -168,7 +170,7 @@ export const robo = {
     { q: 'Any certifications?', a: 'Yes. Highlights include the AWS SimuLearn AI Practitioner badge, Oracle Agentic AI Foundations Associate, and EC-Council Ethical Hacking Essentials, plus CCNA, MikroTik MTCNA, Google Technical Support Fundamentals, and Claude 101.' },
   ],
   fallback: "I can't reach my AI brain right now, but you can tap one of the quick questions, or check the sections below.",
-  // Scroll tour: what Robo says when the visitor reaches each section.
+  // Scroll tour: what the assistant says when the visitor reaches each section.
   // Project cards get their own line, built from the projects list above.
   // {certs} is replaced with the number of certifications.
   tour: {

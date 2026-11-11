@@ -1,4 +1,4 @@
-import { profile } from '../data/profile.js';
+import { profile, robo } from '../data/profile.js';
 import Button from './Button.jsx';
 import AvatarCard from './AvatarCard.jsx';
 import Typewriter from './Typewriter.jsx';
@@ -37,7 +37,7 @@ export default function Hero({ onTalk }) {
         </p>
         <div className="row">
           <Button primary onClick={onTalk}>
-            Talk to Robo
+            Talk to {robo.name}
           </Button>
           <Button href={profile.cv} download="Steven-Lim-CV.pdf">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

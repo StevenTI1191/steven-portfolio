@@ -1,14 +1,14 @@
 # Steven Lim — Portfolio
 
-React + Vite portfolio with a 3D robot assistant (Robo) that answers questions about Steven using Cloudflare Workers AI. Hosting and AI both run on Cloudflare's free plan.
+React + Vite portfolio with a 3D robot assistant (Xiao Hei, 小黑) that answers questions about Steven using Cloudflare Workers AI. Hosting and AI both run on Cloudflare's free plan.
 
 ## What's inside
 
 ```
 src/
-  data/profile.js        ← ALL content lives here (projects, skills, badges, Robo's answers)
+  data/profile.js        ← ALL content lives here (projects, skills, badges, the assistant's answers)
   components/            ← one file per section (Hero, Projects, Skills, Badges, ...)
-  components/Robo.jsx    ← Robo's speech bubble + chat
+  components/Robo.jsx    ← the assistant's speech bubble + chat (name set in profile.js → robo.name)
   components/robotScene.js ← the 3D robot (Three.js)
   styles.css
 functions/api/chat.js    ← chat handler: POST /api/chat → Workers AI
@@ -31,7 +31,7 @@ npm install
 npm run dev
 ```
 
-Open the address it prints (usually http://localhost:5173). In this mode `/api/chat` doesn't exist yet, so Robo answers from the offline replies in `profile.js`. That's expected.
+Open the address it prints (usually http://localhost:5173). In this mode `/api/chat` doesn't exist yet, so the assistant answers from the offline replies in `profile.js`. That's expected.
 
 To test the real AI locally (needs a free Cloudflare account):
 
@@ -46,7 +46,7 @@ Open `src/data/profile.js` and replace everything in `[square brackets]`.
 
 - **Badges:** copy the image into `public/badges/` (e.g. `aws.png`), then set `image: '/badges/aws.png'` on that badge.
 - **Project screenshots:** create `public/projects/`, add images, then set `screenshot: '/projects/inventory.png'`.
-- **Robo's knowledge** is built automatically from this file, so the AI always matches what's on the page.
+- **The assistant's knowledge** is built automatically from this file, so the AI always matches what's on the page.
 
 ## 3. Deploy to Cloudflare Pages
 
@@ -72,6 +72,6 @@ Pages project → **Custom domains** → **Set up a custom domain** → enter yo
 
 ## Notes
 
-- **Cost:** Workers AI has a free daily allowance. If it runs out, `/api/chat` returns an error and Robo falls back to the offline answers, so the site never breaks. Check current limits on Cloudflare's Workers AI pricing page.
+- **Cost:** Workers AI has a free daily allowance. If it runs out, `/api/chat` returns an error and the assistant falls back to the offline answers, so the site never breaks. Check current limits on Cloudflare's Workers AI pricing page.
 - **Model:** change `MODEL` in `functions/api/chat.js` to try another Workers AI model.
-- **Voice:** Robo uses the browser's built-in text-to-speech; visitors can mute it in the chat.
+- **Voice:** the assistant uses the browser's built-in text-to-speech; visitors can mute it in the chat.
