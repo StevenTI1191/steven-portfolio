@@ -219,6 +219,7 @@ const Robo = forwardRef(function Robo(_, ref) {
 
   const toggleVoice = () => {
     const next = !voiceOn;
+    readUntil.current = Date.now() + 4000; // the visitor just used the bubble: keep it up a moment
     if (!next) {
       stop();
       sayId.current++; // anything still speaking won't come back to change the bubble
@@ -230,9 +231,13 @@ const Robo = forwardRef(function Robo(_, ref) {
     } catch {
       /* storage blocked: the choice lasts for this page view */
     }
+    voiceJustOn.current = next;
   };
+  // Unmuting reads the current section aloud, so the visitor hears that the voice is back
+  const voiceJustOn = useRef(false);
 
-  const tourRef = useRef({ off: readTourOff(), seen: new Set(), spot: null, showing: false });
+  const tourRef = useRef({ off: readTourOff(), last: null, spot: null, showing: false });
+  const [tourOff, setTourOff] = useState(tourRef.current.off); // mirrors tourRef for the chat's "Resume tour" chip
   const readUntil = useRef(0);
   const [spot, setSpot] = useState(null); // mirrors tourRef.current.spot for the chat's "Explain …" chip
 
@@ -432,7 +437,8 @@ const Robo = forwardRef(function Robo(_, ref) {
       t.spot = spot;
       setSpot(spot);
       clearTimeout(settle);
-      if (!spot || t.off || t.seen.has(spot)) return;
+      // Explain every spot the visitor settles on, except the one Robo just explained
+      if (!spot || t.off || spot === t.last) return;
       // Wait until the visitor stops on it, so fast scrolling doesn't fire a line per section
       settle = setTimeout(() => {
         const busy =
@@ -443,7 +449,7 @@ const Robo = forwardRef(function Robo(_, ref) {
         if (t.off || t.spot !== spot || busy) return;
         const line = tourLine(spot);
         if (!line) return;
-        t.seen.add(spot);
+        t.last = spot;
         // Browsers only allow speech after the visitor has clicked or tapped the page once;
         // until then (or when muted) the line is shown as text
         const activated = navigator.userActivation ? navigator.userActivation.hasBeenActive : true;
@@ -463,12 +469,42 @@ const Robo = forwardRef(function Robo(_, ref) {
     };
   }, [bot, say, voiceOn]);
 
+  useEffect(() => {
+    if (!voiceOn || !voiceJustOn.current) return;
+    voiceJustOn.current = false;
+    const t = tourRef.current;
+    if (chatOpenRef.current) return;
+    const line = !t.off && tourLine(t.spot);
+    if (line) {
+      t.last = t.spot;
+      say(line, { tour: true });
+    }
+  }, [voiceOn, say]);
+
   const stopTour = () => {
     tourRef.current.off = true;
+    setTourOff(true);
     try {
       sessionStorage.setItem(TOUR_OFF_KEY, '1');
     } catch {
       /* storage blocked: the tour still stops for this page view */
+    }
+  };
+  const resumeTour = () => {
+    const t = tourRef.current;
+    t.off = false;
+    t.last = null;
+    setTourOff(false);
+    try {
+      sessionStorage.removeItem(TOUR_OFF_KEY);
+    } catch {
+      /* storage blocked */
+    }
+    setChatOpen(false);
+    const line = tourLine(t.spot);
+    if (line) {
+      t.last = t.spot;
+      say(line, { tour: true, silent: !voiceOn });
     }
   };
 
@@ -502,6 +538,7 @@ const Robo = forwardRef(function Robo(_, ref) {
     addEventListener('scroll', schedule, { passive: true });
     addEventListener('resize', schedule);
     const onFocus = (e) => {
+      if (e.target?.closest?.('.dock')) return; // the visitor is using Robo's own buttons
       // Tapping into a form field: a tour line shouldn't sit on top of it
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') && tourRef.current.showing && !e.target.closest('.chat')) {
         readUntil.current = 0;
@@ -617,34 +654,47 @@ const Robo = forwardRef(function Robo(_, ref) {
 
   return (
     <div className="dock">
-      {has3d && (
-        <canvas
-          ref={canvasRef}
-          id="bot"
-          className={ready3d ? 'ready' : undefined}
-          role="button"
-          tabIndex={0}
-          aria-label="Robo, a 3D assistant. Tap to chat."
-          onClick={() => {
-            act('jump');
-            setChatOpen(true);
-            say(robo.poke);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
+      <div className="robo-spot">
+        {has3d && (
+          <canvas
+            ref={canvasRef}
+            id="bot"
+            className={ready3d ? 'ready' : undefined}
+            role="button"
+            tabIndex={0}
+            aria-label="Robo, a 3D assistant. Tap to chat."
+            onClick={() => {
+              act('jump');
               setChatOpen(true);
               say(robo.poke);
-            }
-          }}
-        />
-      )}
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setChatOpen(true);
+                say(robo.poke);
+              }
+            }}
+          />
+        )}
 
-      {!has3d && (
-        <button className="robo-fallback" type="button" aria-label="Chat with Robo" onClick={() => setChatOpen(true)}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="4" /><path d="M12 3v4M9 13h.01M15 13h.01" /></svg>
+        {!has3d && (
+          <button className="robo-fallback" type="button" aria-label="Chat with Robo" onClick={() => setChatOpen(true)}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="4" /><path d="M12 3v4M9 13h.01M15 13h.01" /></svg>
+          </button>
+        )}
+
+        <button
+          className="dock-voice"
+          type="button"
+          aria-pressed={!voiceOn}
+          aria-label={voiceOn ? "Mute Robo's voice" : "Unmute Robo's voice"}
+          title={voiceOn ? "Mute Robo's voice" : "Unmute Robo's voice"}
+          onClick={toggleVoice}
+        >
+          <VoiceIcon on={voiceOn} size={15} />
         </button>
-      )}
+      </div>
 
       <div className="dock-col">
         {chatOpen && (
@@ -669,6 +719,11 @@ const Robo = forwardRef(function Robo(_, ref) {
               <span ref={listEnd} />
             </div>
             <div className="chat-quick">
+              {tourOff && (
+                <button type="button" className="quick here" onClick={resumeTour}>
+                  Resume scroll tour
+                </button>
+              )}
               {spot && (
                 <button type="button" className="quick here" onClick={askHere} disabled={thinking}>
                   Explain {spotName(spot)}

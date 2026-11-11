@@ -599,3 +599,13 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .bubble-tools{display:inline-flex;align-items:baseline;gap:12px}
 .voice-btn{display:inline-flex;align-items:center;gap:4px}
 .voice-btn svg{align-self:center}
+
+/* Robo's own mute button: always visible beside him, so the voice can be turned back on any time */
+.robo-spot{position:relative;flex:none;display:flex;align-items:flex-end}
+.dock-voice{pointer-events:auto;position:absolute;top:6px;right:-6px;width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:2px 2px 0 var(--ink);padding:0;transition:background .2s,color .2s}
+.dock-voice::after{content:"";position:absolute;inset:-6px}
+.dock-voice:hover{background:var(--soft)}
+.dock-voice[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.dock-voice:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* with the round fallback button instead of the 3D robot, sit on its top-right edge */
+.robo-fallback + .dock-voice{top:-12px;right:-12px;width:28px;height:28px}
