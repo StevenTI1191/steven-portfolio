@@ -42,7 +42,6 @@ export const projects = [
       'Detects schedule conflicts, including setup and teardown',
       'Auto invoices, to-do lists, and performance metrics',
     ],
-    stat: { value: 'Live', label: "Passed UAT and runs in the company's daily operations" },
     stack: ['Laravel', 'React.js', 'MySQL', 'OCR'],
     github: 'https://github.com/StevenTI1191/EventSystem-LaksamanaMuda',
   },
@@ -163,7 +162,7 @@ export const robo = {
   terminalHint: 'Psst… Steven has a hidden terminal. Press ` on your keyboard, or tap >_ at the top.',
   quick: [
     { q: 'What does Steven do?', a: 'Steven is an Information Technology student at Politeknik Caltex Riau. Right now he is a Technical Support Engineer intern at Apical and an AWS re/start learner at Orbit Future Academy. Before that, he built web systems for Laksamana Group.' },
-    { q: 'Tell me about his projects', a: 'His final project is an event management system now used by PT Laksamana Muda Bersatu, with a sales pipeline, OCR payment checks, and conflict detection. He also built an IndoBERT sentiment analysis, the EcoScore map app, the EventSight Android app, and the KlikApotek pharmacy store.' },
+    { q: 'Tell me about his projects', a: 'His final project is an event management system built for PT Laksamana Muda Bersatu, with a sales pipeline, OCR payment checks, and conflict detection. He also built an IndoBERT sentiment analysis, the EcoScore map app, the EventSight Android app, and the KlikApotek pharmacy store.' },
     { q: 'What are his skills?', a: 'Laravel, React, PHP, MySQL and REST APIs for the web, networking with MikroTik and Cisco, and AWS and generative AI.' },
     { q: 'How can I contact him?', a: 'Email him at achensteven2005@gmail.com, or reach him on LinkedIn. The contact section has both.' },
     { q: 'What languages does he speak?', a: 'Steven speaks English, Indonesian, and Chinese.' },
