@@ -174,10 +174,15 @@ export const robo = {
   // Project cards get their own line, built from the projects list above.
   // {certs} is replaced with the number of certifications.
   tour: {
+    top: "This is Steven Lim, an IT student at Politeknik Caltex Riau who builds full-stack web apps. Scroll down and I'll show you around!",
+    stats: '{projects} projects built, {certs} certifications, and 13+ ERP modules shipped. Not bad for a student, right?',
     exp: "This is Steven's journey: from IT student at Politeknik Caltex Riau, to building web systems at Laksamana Group, to tech support at Apical and AWS re/start training today.",
     skills: "Steven's toolbox: Laravel, React, PHP and MySQL for the web, MikroTik and Cisco for networks, and AWS for the cloud. Drag the sphere to spin it.",
+    tools: 'Here it is by area: {groups}. Each card lists the tools he works with.',
     cert: '{certs} certifications so far, from AWS and Oracle AI to Cisco CCNA and ethical hacking. Tap a badge to see it up close.',
-    contact: 'Want to work with Steven? Send him a message with this form. It goes straight to his inbox.',
+    certlist: 'And here is every certification with who issued it. Use the tabs to filter by topic.',
+    contact: 'Want to work with Steven? Reach him by email, LinkedIn or GitHub, all right here.',
+    hire: 'Or send him a message with this form. It goes straight to his inbox.',
   },
 };
 

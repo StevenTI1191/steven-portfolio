@@ -33,11 +33,15 @@ ${buildKnowledge()}`;
 // so it can't be used to slip instructions into the prompt)
 const SECTIONS = {
   top: 'the introduction at the top of the page',
+  stats: 'the quick facts (numbers) near the top of the page',
   exp: "the Experience section (Steven's work and study journey)",
   skills: 'the Skills section',
+  tools: 'the Skills section, the cards that group his tools by area',
   cert: 'the Certifications section',
-  contact: 'the Contact section with the hire form',
-};
+  certlist: 'the full list of certifications',
+  contact: 'the Contact section',
+  hire: 'the hire form in the Contact section',
+}
 export function describeContext(key) {
   if (typeof key !== 'string') return '';
   if (Object.hasOwn(SECTIONS, key)) return SECTIONS[key];

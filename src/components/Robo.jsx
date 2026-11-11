@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { badges, projects, robo } from '../data/profile.js';
+import { badges, projects, robo, toolGroups } from '../data/profile.js';
 
 // Free-typed questions per visitor per day (quick questions don't count).
 // The server has its own per-minute limit; this just keeps casual spam off the AI quota.
@@ -101,11 +101,21 @@ function VoiceIcon({ on, size = 16 }) {
   );
 }
 
-// ---- Scroll tour: Robo explains whatever the visitor has scrolled to ----
-const TOUR_OFF_KEY = 'robo-tour-off';
-const SECTION_IDS = ['exp', 'skills', 'cert', 'contact'];
+// ---- Scroll tour: the assistant explains whatever the visitor has scrolled to ----
+// Specific parts are checked before the sections that contain them.
+const SPOTS = [
+  ['hire', '#contact .hire'],
+  ['contact', '#contact'],
+  ['certlist', '#cert .cert-list'],
+  ['cert', '#cert'],
+  ['tools', '#skills .tools'],
+  ['skills', '#skills'],
+  ['exp', '#exp'],
+  ['stats', 'main .stats'],
+  ['top', '#top'],
+];
 
-// Which section (or which project card) sits in the middle of the screen right now
+// Which part of the page (or which project card) sits in the middle of the screen right now
 function currentSpot() {
   if (document.getElementById('intro')) return null;
   const mid = innerHeight * 0.45;
@@ -122,9 +132,9 @@ function currentSpot() {
     });
     return cur >= 0 && projects[cur] ? `project:${projects[cur].id}` : null;
   }
-  for (const id of SECTION_IDS) {
-    const el = document.getElementById(id);
-    if (el && inMid(el)) return id;
+  for (const [key, sel] of SPOTS) {
+    const el = document.querySelector(sel);
+    if (el && inMid(el)) return key;
   }
   return null;
 }
@@ -137,7 +147,10 @@ function tourLine(spot) {
     if (!p) return '';
     return `Project ${i + 1} of ${projects.length}: ${p.title}. ${p.summary}.${p.stat ? ` ${p.stat.value}: ${p.stat.label}.` : ''}`;
   }
-  return (robo.tour?.[spot] || '').replace('{certs}', badges.length);
+  return (robo.tour?.[spot] || '')
+    .replace('{certs}', badges.length)
+    .replace('{projects}', projects.length)
+    .replace('{groups}', toolGroups.map((g) => g.title.toLowerCase()).join(', '));
 }
 
 // A longer offline explanation, used when the visitor asks about the current spot and the AI is unreachable
@@ -151,16 +164,18 @@ function spotDetail(spot) {
 
 function spotName(spot) {
   if (spot?.startsWith('project:')) return projects.find((x) => `project:${x.id}` === spot)?.title || 'this project';
-  return { exp: 'his journey', skills: 'his skills', cert: 'his certifications', contact: 'getting in touch' }[spot] || 'this';
+  return {
+    top: 'who Steven is',
+    stats: 'these numbers',
+    exp: 'his journey',
+    skills: 'his skills',
+    tools: 'his toolbox',
+    cert: 'his certifications',
+    certlist: 'his certifications',
+    contact: 'getting in touch',
+    hire: 'the hire form',
+  }[spot] || 'this';
 }
-
-const readTourOff = () => {
-  try {
-    return sessionStorage.getItem(TOUR_OFF_KEY) === '1';
-  } catch {
-    return false;
-  }
-};
 
 // Picks an offline answer when the AI endpoint is unavailable
 // Keywords (English and Indonesian) → the quick question whose text contains the hint
@@ -211,6 +226,16 @@ const Robo = forwardRef(function Robo(_, ref) {
     bot.act = kind;
     bot.actT = 0;
   }, [bot]);
+
+  // Entrance: Xiao Hei first shows up big and waves, then shrinks into his corner
+  // and the greeting bubble appears. Skipped for visitors who prefer reduced motion.
+  const [big, setBig] = useState(() => {
+    try {
+      return !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+      return false;
+    }
+  });
 
   // 3D scene. Three.js is large, so it loads in its own file only after the page
   // has rendered and the browser is idle. Visitors with Data Saver on get the light button.
@@ -294,7 +319,8 @@ const Robo = forwardRef(function Robo(_, ref) {
   // Unmuting reads the current section aloud, so the visitor hears that the voice is back
   const voiceJustOn = useRef(false);
 
-  const tourRef = useRef({ off: readTourOff(), last: null, spot: null, showing: false });
+  // "Stop tour" lasts for this page view only: a reload brings the tour back
+  const tourRef = useRef({ off: false, last: null, spot: null, showing: false });
   const [tourOff, setTourOff] = useState(tourRef.current.off); // mirrors tourRef for the chat's "Resume tour" chip
   const readUntil = useRef(0);
   const [spot, setSpot] = useState(null); // mirrors tourRef.current.spot for the chat's "Explain …" chip
@@ -304,6 +330,7 @@ const Robo = forwardRef(function Robo(_, ref) {
   const say = useCallback(
     (line, opts = {}) => {
       stop();
+      setBig(false); // talking during the entrance: shrink now so the bubble shows
       const id = ++sayId.current; // a cancelled earlier line must not finish this one
       tourRef.current.showing = !!opts.tour;
       setBubbleOpen(true);
@@ -469,6 +496,21 @@ const Robo = forwardRef(function Robo(_, ref) {
     ask(`Tell me more about ${spotName(spot)}.`);
   };
 
+  const shown = ready3d || !has3d;
+  useEffect(() => {
+    if (!big) return;
+    if (!shown) {
+      const giveUp = setTimeout(() => setBig(false), 8000); // the robot never loaded: don't wait forever
+      return () => clearTimeout(giveUp);
+    }
+    const wave = setTimeout(() => act('wave'), 500);
+    const shrink = setTimeout(() => setBig(false), 2600);
+    return () => {
+      clearTimeout(wave);
+      clearTimeout(shrink);
+    };
+  }, [big, shown, act]);
+
   // The terminal's "ask <question>" command hands the question to Robo
   const askRef = useRef(ask);
   askRef.current = ask;
@@ -543,22 +585,12 @@ const Robo = forwardRef(function Robo(_, ref) {
   const stopTour = () => {
     tourRef.current.off = true;
     setTourOff(true);
-    try {
-      sessionStorage.setItem(TOUR_OFF_KEY, '1');
-    } catch {
-      /* storage blocked: the tour still stops for this page view */
-    }
   };
   const resumeTour = () => {
     const t = tourRef.current;
     t.off = false;
     t.last = null;
     setTourOff(false);
-    try {
-      sessionStorage.removeItem(TOUR_OFF_KEY);
-    } catch {
-      /* storage blocked */
-    }
     setChatOpen(false);
     const line = tourLine(t.spot);
     if (line) {
@@ -623,7 +655,7 @@ const Robo = forwardRef(function Robo(_, ref) {
       clearTimeout(later);
       cancelAnimationFrame(raf);
     };
-  }, [bot, bubbleOpen, idx]);
+  }, [bot, bubbleOpen, idx, big]);
 
   // Konami code: Robo shows off his dance moves
   const sayRef = useRef(say);
@@ -712,7 +744,7 @@ const Robo = forwardRef(function Robo(_, ref) {
   const pct = idx < 0 ? 0 : Math.min(100, Math.round(((idx + 1) / words.length) * 100));
 
   return (
-    <div className="dock">
+    <div className={`dock${big ? ' big' : ''}`}>
       <div className="robo-spot">
         {has3d && (
           <canvas
