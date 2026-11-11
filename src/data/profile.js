@@ -148,8 +148,8 @@ export const experience = [
   { now: true, when: 'Nov 2026 – present', title: 'Cloud Computing Trainee / AWS re/start Learner · Orbit Future Academy', org: 'Orbit Future Academy', logo: '/logos/orbit.png', logoFill: true, text: 'Training in Amazon Web Services (AWS) and cloud computing through the AWS re/start program.' },
   { now: true, when: 'Oct 2026 – present', title: 'Technical Support Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship in Kota Dumai, Riau, in technical support and IT services.' },
   { when: 'Sep – Oct 2026', title: 'Automation Engineer · Apical', org: 'Apical', logo: '/logos/apical.png', text: 'Internship. Learned Hollysys DCS operations at the power plant by observing experienced engineers.' },
-  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', org: 'Laksamana Group', initials: 'LG', text: 'Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
-  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', org: 'Laksamana Group', initials: 'LG', text: 'Developed automated e-ticketing workflows and a seat selection system.' },
+  { when: 'Jul – Aug 2026', title: 'Web Application Developer · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.png', text: 'Part-time in Pekanbaru. Built an internal ERP-style system with 13+ business modules, REST APIs in PHP and MySQL, role-based access control, and CI/CD deployment.' },
+  { when: 'Jul – Oct 2025', title: 'Ticketing & Registration System Lead · Laksamana Group', org: 'Laksamana Group', logo: '/logos/laksamana.png', text: 'Freelance in Pekanbaru. Developed automated e-ticketing workflows and a seat selection system.' },
   { when: '2023 – 2027', title: 'Student · Politeknik Caltex Riau', org: 'Politeknik Caltex Riau', initials: 'PCR', text: 'Bachelor of Applied Science, Information Technology.' },
 ];
 
