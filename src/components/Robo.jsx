@@ -25,6 +25,15 @@ function bumpQuota() {
   }
 }
 
+// Robo replies in the visitor's language, so pick a matching voice for Indonesian replies
+const ID_WORDS = /\b(yang|dan|adalah|dengan|saya|dia|untuk|tidak|ini|itu|bisa|sudah|juga|dari|ke|di)\b/gi;
+function guessLang(text) {
+  return (text.match(ID_WORDS) || []).length >= 2 ? 'id-ID' : 'en-US';
+}
+
+// Browser speech-to-text (Chrome, Edge, Safari). Missing in Firefox, where the mic button is hidden.
+const SpeechRec = typeof window !== 'undefined' ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
+
 // Picks an offline answer when the AI endpoint is unavailable
 function offlineAnswer(q) {
   const s = q.toLowerCase();
@@ -143,9 +152,10 @@ const Robo = forwardRef(function Robo(_, ref) {
         try {
           if ('speechSynthesis' in window) {
             const u = new SpeechSynthesisUtterance(line);
-            u.lang = 'en-US';
+            const lang = guessLang(line);
+            u.lang = lang;
             u.rate = 1.02;
-            const v = speechSynthesis.getVoices().find((x) => /^en/i.test(x.lang));
+            const v = speechSynthesis.getVoices().find((x) => x.lang.toLowerCase().startsWith(lang.slice(0, 2)));
             if (v) u.voice = v;
             u.onboundary = (e) => {
               if (e.name && e.name !== 'word') return;
@@ -289,6 +299,60 @@ const Robo = forwardRef(function Robo(_, ref) {
     };
   }, [act]);
 
+  // Voice input: tap the mic, speak, and the question is sent when you stop talking
+  const [listening, setListening] = useState(false);
+  const [micMsg, setMicMsg] = useState('');
+  const recRef = useRef(null);
+  const toggleMic = () => {
+    if (listening) {
+      recRef.current?.stop();
+      return;
+    }
+    if (!SpeechRec) return;
+    stop(); // don't let Robo hear himself
+    setMicMsg('');
+    let finalText = '';
+    const rec = new SpeechRec();
+    rec.lang = (navigator.language || '').toLowerCase().startsWith('id') ? 'id-ID' : 'en-US';
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    rec.continuous = false;
+    rec.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) finalText += r[0].transcript;
+        else interim += r[0].transcript;
+      }
+      setInput((finalText + interim).trim());
+    };
+    rec.onerror = (e) => {
+      const msg = {
+        'not-allowed': 'Microphone access is blocked. Allow it in your browser, or type instead.',
+        'service-not-allowed': 'Voice input is turned off in this browser. You can type instead.',
+        'no-speech': "I didn't catch that. Tap the mic and try again.",
+        'audio-capture': 'No microphone found. You can type instead.',
+        network: 'Voice input needs an internet connection.',
+      }[e.error];
+      if (msg) setMicMsg(msg);
+    };
+    rec.onend = () => {
+      setListening(false);
+      recRef.current = null;
+      const q = finalText.trim();
+      if (q) askRef.current(q);
+    };
+    try {
+      rec.start();
+      recRef.current = rec;
+      setListening(true);
+      act('nod');
+    } catch {
+      setMicMsg("Voice input couldn't start. You can type instead.");
+    }
+  };
+  useEffect(() => () => recRef.current?.abort?.(), []);
+
   const words = text.split(' ');
   const pct = idx < 0 ? 0 : Math.min(100, Math.round(((idx + 1) / words.length) * 100));
 
@@ -364,9 +428,37 @@ const Robo = forwardRef(function Robo(_, ref) {
               }}
             >
               <label htmlFor="robo-input" className="sr-only">Your question</label>
-              <input id="robo-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="What has Steven built?" maxLength={300} autoComplete="off" />
+              <input
+                id="robo-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={listening ? 'Listening… speak now' : 'What has Steven built?'}
+                maxLength={300}
+                autoComplete="off"
+              />
+              {SpeechRec && (
+                <button
+                  type="button"
+                  className={`mic-btn${listening ? ' on' : ''}`}
+                  onClick={toggleMic}
+                  disabled={thinking}
+                  aria-pressed={listening}
+                  aria-label={listening ? 'Stop listening' : 'Ask by voice'}
+                  title={listening ? 'Stop listening' : 'Ask by voice'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="9" y="3" width="6" height="11" rx="3" />
+                    <path d="M5 11a7 7 0 0014 0M12 18v3" />
+                  </svg>
+                </button>
+              )}
               <button className="btn primary sm" type="submit" disabled={thinking || !input.trim()}>Send</button>
             </form>
+            {(listening || micMsg) && (
+              <p className={`mic-msg${listening ? ' live' : ''}`} role="status">
+                {listening ? 'Listening… stop talking to send.' : micMsg}
+              </p>
+            )}
           </div>
         )}
 

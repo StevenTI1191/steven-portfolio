@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { profile } from '../data/profile.js';
 import { GitHubIcon, LinkedInIcon, MailIcon } from './icons.jsx';
+import HireForm from './HireForm.jsx';
 
 export default function Contact() {
   const [copied, setCopied] = useState('');
@@ -63,6 +64,7 @@ export default function Contact() {
         </a>
       </div>
       <span className="copied" aria-live="polite">{copied}</span>
+      <HireForm />
     </section>
   );
 }
