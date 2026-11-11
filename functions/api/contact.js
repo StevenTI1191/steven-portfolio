@@ -119,7 +119,7 @@ export async function onRequestPost({ request, env }, deps = {}) {
 
   // Bots fill the hidden field or submit instantly: pretend it worked and drop it
   const tooFast = typeof body?.elapsed === 'number' && body.elapsed < 2500;
-  if (body?.website || tooFast) return json({ ok: true });
+  if (body?.hp || tooFast) return json({ ok: true });
 
   if (await isRateLimited(request, env)) {
     return json({ error: 'Too many messages. Try again in a minute.' }, 429, { 'Retry-After': '60' });
@@ -131,11 +131,13 @@ export async function onRequestPost({ request, env }, deps = {}) {
   if (!env.SEND_EMAIL) return json({ error: 'Email sending is not set up yet.', fallback: profile.email }, 503);
 
   try {
-    const EmailMessage = deps.EmailMessage || (await import('cloudflare:email')).EmailMessage;
+    const { EmailMessage } = deps;
+    if (!EmailMessage) throw new Error('EmailMessage not provided');
     const raw = buildEmail({ data, to: profile.email, from: FROM });
     await env.SEND_EMAIL.send(new EmailMessage(FROM, profile.email, raw));
     return json({ ok: true });
   } catch (err) {
-    return json({ error: "Couldn't send right now.", fallback: profile.email, detail: String(err?.message || err) }, 502);
+    console.error('contact send failed:', err?.message || err); // visible in Cloudflare logs
+    return json({ error: "Couldn't send right now.", fallback: profile.email }, 502);
   }
 }

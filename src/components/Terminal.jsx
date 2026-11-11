@@ -126,13 +126,18 @@ export default function Terminal() {
       case 'close':
         hide();
         break;
-      case 'copy':
+      case 'copy': {
+        // Only claim it was copied once the browser confirms it
+        const note = (t, c) => setLines((l) => [...l, { kind: 'out', t, c }]);
         try {
-          navigator.clipboard?.writeText(action.text).catch(() => {});
+          navigator.clipboard
+            .writeText(action.text)
+            .then(() => note('✓ Email copied to your clipboard.', 'ok'), () => note('Copy the address above.', 'dim'));
         } catch {
-          /* clipboard blocked; the address is printed anyway */
+          note('Copy the address above.', 'dim');
         }
         break;
+      }
       case 'download': {
         const a = document.createElement('a');
         a.href = action.href;

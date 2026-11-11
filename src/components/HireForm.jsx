@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { profile } from '../data/profile.js';
 
-const EMPTY = { name: '', email: '', company: '', message: '', website: '' };
+const EMPTY = { name: '', email: '', company: '', message: '', hp: '' };
 
 function check(f) {
   const e = {};
@@ -100,10 +100,10 @@ export default function HireForm() {
           <textarea id="hire-message" value={form.message} onChange={set('message')} rows={5} placeholder="Tell me about the role or project, the timeline, and how to reach you." aria-invalid={!!errors.message} aria-describedby={errors.message ? 'hire-message-err' : undefined} maxLength={3000} />
           {errors.message && <span className="field-err" id="hire-message-err">{errors.message}</span>}
         </div>
-        {/* Hidden from people; bots tend to fill it in */}
+        {/* Hidden from people; bots tend to fill it in. Named so browser autofill leaves it alone. */}
         <div className="hp" aria-hidden="true">
-          <label htmlFor="hire-website">Website</label>
-          <input id="hire-website" tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
+          <label htmlFor="hire-hp">Leave this empty</label>
+          <input id="hire-hp" tabIndex={-1} autoComplete="off" data-lpignore="true" data-1p-ignore value={form.hp} onChange={set('hp')} />
         </div>
       </div>
 

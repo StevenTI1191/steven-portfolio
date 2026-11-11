@@ -240,6 +240,7 @@ const Robo = forwardRef(function Robo(_, ref) {
     const next = [...history, { role: 'user', content: q }];
     setHistory(next);
     setInput('');
+    setMicMsg('');
     setThinking(true);
     act('nod');
 
@@ -340,7 +341,7 @@ const Robo = forwardRef(function Robo(_, ref) {
       setListening(false);
       recRef.current = null;
       const q = finalText.trim();
-      if (q) askRef.current(q);
+      if (q && !rec.cancelled) askRef.current(q);
     };
     try {
       rec.start();
@@ -351,7 +352,17 @@ const Robo = forwardRef(function Robo(_, ref) {
       setMicMsg("Voice input couldn't start. You can type instead.");
     }
   };
-  useEffect(() => () => recRef.current?.abort?.(), []);
+  // Closing the chat (or leaving the page) cancels listening without sending anything
+  const cancelMic = () => {
+    const rec = recRef.current;
+    if (!rec) return;
+    rec.cancelled = true;
+    try { rec.abort(); } catch { /* already stopped */ }
+  };
+  useEffect(() => {
+    if (!chatOpen) cancelMic();
+  }, [chatOpen]);
+  useEffect(() => () => cancelMic(), []);
 
   const words = text.split(' ');
   const pct = idx < 0 ? 0 : Math.min(100, Math.round(((idx + 1) / words.length) * 100));

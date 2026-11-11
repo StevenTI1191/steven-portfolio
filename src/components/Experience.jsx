@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { experience } from '../data/profile.js';
 
+// Notes in [square brackets] are placeholders still to be filled in, so they're never shown
+const clean = (t = '') => t.replace(/\s*\[[^\]]*\]/g, '').trim();
+
 export default function Experience() {
   const tl = useRef(null);
 
@@ -31,7 +34,7 @@ export default function Experience() {
             {e.now && <span className="now-tag">Now</span>}
             <span className="when">{e.when}</span>
             <h3>{e.title}</h3>
-            <p>{e.text}</p>
+            {clean(e.text) && <p>{clean(e.text)}</p>}
           </div>
         ))}
       </div>

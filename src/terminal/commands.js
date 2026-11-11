@@ -98,7 +98,7 @@ export function run(raw) {
       };
     case 'contact':
       return {
-        lines: [...FILES['contact.txt'](), ok('✓ Email copied to your clipboard.')],
+        lines: FILES['contact.txt'](),
         action: { type: 'copy', text: profile.email },
       };
     case 'cv':

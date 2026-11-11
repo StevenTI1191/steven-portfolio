@@ -1,8 +1,12 @@
 // Cloudflare Worker entry: serves the built site from /dist plus two small APIs.
 // Static files are served automatically; requests that don't match a file come here.
 
+import { EmailMessage } from 'cloudflare:email';
 import * as chat from '../functions/api/chat.js';
 import * as contact from '../functions/api/contact.js';
+
+// Runtime-only modules the API handlers need (passed in so the handlers stay testable)
+const DEPS = { EmailMessage };
 
 const ROUTES = {
   '/api/chat': chat,
@@ -15,7 +19,7 @@ export default {
     const route = ROUTES[url.pathname];
 
     if (route) {
-      if (request.method === 'POST' && route.onRequestPost) return route.onRequestPost({ request, env });
+      if (request.method === 'POST' && route.onRequestPost) return route.onRequestPost({ request, env }, DEPS);
       if (request.method === 'GET' && route.onRequestGet) return route.onRequestGet();
       return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
     }
