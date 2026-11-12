@@ -41,7 +41,7 @@ const SECTIONS = {
   certlist: 'the full list of certifications',
   contact: 'the Contact section',
   hire: 'the hire form in the Contact section',
-}
+};
 export function describeContext(key) {
   if (typeof key !== 'string') return '';
   if (Object.hasOwn(SECTIONS, key)) return SECTIONS[key];
@@ -163,7 +163,27 @@ export async function onRequestPost({ request, env }) {
 // Workers AI models return the text as `response`; some newer ones use an OpenAI-style `choices` list
 export function replyText(result) {
   const r = result?.response ?? result?.choices?.[0]?.message?.content ?? '';
-  return (typeof r === 'string' ? r : '').trim();
+  return tidyReply(typeof r === 'string' ? r : '');
+}
+
+// The chat shows plain text and the voice reads it aloud, so drop any markdown the model slips in,
+// and if the length limit cut the answer mid-sentence, end it at the last complete sentence.
+export function tidyReply(text) {
+  let t = text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*•]\s+/gm, '')
+    .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '$1 ($2)')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+  if (!/[.!?。！？)"'”’]$/.test(t)) {
+    // Western sentence ends need a space after them (so "e.g" or "3.5" don't count); Chinese ones don't
+    const ends = [...t.matchAll(/[。！？]|[.!?](?=\s)/g)];
+    if (ends.length) t = t.slice(0, ends[ends.length - 1].index + 1);
+  }
+  return t;
 }
 
 export function onRequestGet() {

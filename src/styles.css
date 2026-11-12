@@ -550,7 +550,7 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .chat-head b{font:600 16px var(--display)}
 .icon-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);display:grid;place-items:center;cursor:pointer;font:600 18px var(--body);position:relative}
 .icon-btn::after{content:"";position:absolute;inset:-5px}
-.icon-btn[aria-pressed="false"]{background:var(--soft)}
+.icon-btn.muted{background:var(--soft)}
 .chat-list{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:120px}
 .chat-empty{color:var(--muted);font-size:14px}
 .chat-msg{max-width:85%;padding:9px 13px;border-radius:16px;font-size:15px;line-height:1.45;animation:pop .3s var(--ease) both;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -605,7 +605,7 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dock-voice{pointer-events:auto;position:absolute;top:6px;right:-6px;width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:2px 2px 0 var(--ink);padding:0;transition:background .2s,color .2s}
 .dock-voice::after{content:"";position:absolute;inset:-6px}
 .dock-voice:hover{background:var(--soft)}
-.dock-voice[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.dock-voice.muted{background:var(--ink);color:var(--paper)}
 .dock-voice:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* with the round fallback button instead of the 3D robot, sit on its top-right edge */
 .robo-fallback + .dock-voice{top:-12px;right:-12px;width:28px;height:28px}

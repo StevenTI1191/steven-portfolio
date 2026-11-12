@@ -82,6 +82,27 @@ function pickVoice(lang) {
   return inLang.find((v) => v.lang.replace('_', '-') === lang) || inLang[0] || null;
 }
 
+// Chrome's built-in Google voices stop after about 15 seconds without saying they've finished,
+// so long answers are spoken a sentence (or ~160 characters) at a time.
+function speechChunks(line) {
+  const out = [];
+  const parts = line.match(/[^.!?。！？]+[.!?。！？]*\s*/g) || [line];
+  let pos = 0;
+  for (const part of parts) {
+    let rest = part;
+    while (rest.length > 160) {
+      const cut = Math.max(rest.lastIndexOf(', ', 160), rest.lastIndexOf(' ', 160));
+      const at = cut > 40 ? cut + 1 : 160;
+      out.push({ text: rest.slice(0, at), start: pos });
+      pos += at;
+      rest = rest.slice(at);
+    }
+    if (rest.trim()) out.push({ text: rest, start: pos });
+    pos += rest.length;
+  }
+  return out;
+}
+
 // Speech-to-text language: the visitor's browser language when Robo can answer in it
 const MIC_LANGS = { en: 'en-US', id: 'id-ID', zh: 'zh-CN', de: 'de-DE', fr: 'fr-FR', es: 'es-ES' };
 const micLang = () => {
@@ -330,6 +351,7 @@ const Robo = forwardRef(function Robo(_, ref) {
 
   // Speak a line with word-by-word highlight
   const sayId = useRef(0);
+  const talkWatchdog = useRef(0);
   const say = useCallback(
     (line, opts = {}) => {
       stop();
@@ -353,6 +375,7 @@ const Robo = forwardRef(function Robo(_, ref) {
       const finish = () => {
         if (id !== sayId.current) return;
         clearInterval(timer.current);
+        clearTimeout(talkWatchdog.current);
         bot.talking = false;
         setIdx(n);
         act('nod');
@@ -362,24 +385,35 @@ const Robo = forwardRef(function Robo(_, ref) {
       if (voiceOn) {
         try {
           if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(line);
             const lang = guessLang(line);
-            u.lang = lang;
-            u.rate = ROBO_RATE;
-            u.pitch = ROBO_PITCH;
-            const v = pickVoice(lang);
-            if (v) u.voice = v;
-            u.onboundary = (e) => {
+            const voice = pickVoice(lang);
+            const chunks = speechChunks(line);
+            let k = 0;
+            const speakNext = () => {
               if (id !== sayId.current) return;
-              if (e.name && e.name !== 'word') return;
-              gotBoundary = true;
-              const before = line.slice(0, e.charIndex).trim();
-              setIdx(before ? before.split(' ').length : 0);
+              if (k >= chunks.length) return finish();
+              const c = chunks[k++];
+              const u = new SpeechSynthesisUtterance(c.text);
+              u.lang = lang;
+              u.rate = ROBO_RATE;
+              u.pitch = ROBO_PITCH;
+              if (voice) u.voice = voice;
+              u.onboundary = (e) => {
+                if (id !== sayId.current) return;
+                if (e.name && e.name !== 'word') return;
+                gotBoundary = true;
+                const before = line.slice(0, c.start + e.charIndex).trim();
+                setIdx(before ? before.split(' ').length : 0);
+              };
+              u.onend = speakNext;
+              u.onerror = finish;
+              speechSynthesis.speak(u);
             };
-            u.onend = finish;
-            u.onerror = finish;
-            speechSynthesis.speak(u);
+            speakNext();
             voiced = true;
+            // Safety net: some browsers never report the end of speech; don't stay "talking" forever
+            clearTimeout(talkWatchdog.current);
+            talkWatchdog.current = setTimeout(finish, (n * 0.45 + 3) * 1000);
           }
         } catch {
           voiced = false;
@@ -817,9 +851,8 @@ const Robo = forwardRef(function Robo(_, ref) {
         )}
 
         <button
-          className="dock-voice"
+          className={`dock-voice${voiceOn ? '' : ' muted'}`}
           type="button"
-          aria-pressed={!voiceOn}
           aria-label={voiceOn ? `Mute ${robo.name}'s voice` : `Unmute ${robo.name}'s voice`}
           title={voiceOn ? `Mute ${robo.name}'s voice` : `Unmute ${robo.name}'s voice`}
           onClick={toggleVoice}
@@ -846,7 +879,7 @@ const Robo = forwardRef(function Robo(_, ref) {
             <div className="chat-head">
               <b>Ask {robo.name}</b>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button className="icon-btn" type="button" aria-pressed={voiceOn} aria-label={voiceOn ? 'Mute voice' : 'Turn voice on'} onClick={toggleVoice}>
+                <button className={`icon-btn${voiceOn ? '' : ' muted'}`} type="button" aria-label={voiceOn ? 'Mute voice' : 'Turn voice on'} onClick={toggleVoice}>
                   <VoiceIcon on={voiceOn} />
                 </button>
                 <button className="icon-btn" type="button" aria-label="Close chat" onClick={() => setChatOpen(false)}>×</button>
@@ -901,7 +934,6 @@ const Robo = forwardRef(function Robo(_, ref) {
                   className={`mic-btn${listening ? ' on' : ''}`}
                   onClick={toggleMic}
                   disabled={thinking}
-                  aria-pressed={listening}
                   aria-label={listening ? 'Stop listening' : 'Ask by voice'}
                   title={listening ? 'Stop listening' : 'Ask by voice'}
                 >
@@ -952,7 +984,7 @@ const Robo = forwardRef(function Robo(_, ref) {
                 <button className="ask-btn" type="button" onClick={() => setChatOpen(true)}>Ask me anything →</button>
               )}
               <span className="bubble-tools">
-                <button className="voice-btn" type="button" aria-pressed={!voiceOn} onClick={toggleVoice}>
+                <button className="voice-btn" type="button" onClick={toggleVoice}>
                   <VoiceIcon on={voiceOn} size={13} />
                   {voiceOn ? 'Mute' : 'Unmute'}
                 </button>
