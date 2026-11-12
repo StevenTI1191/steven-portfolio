@@ -608,7 +608,7 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dock-voice.muted{background:var(--ink);color:var(--paper)}
 .dock-voice:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* with the round fallback button instead of the 3D robot, sit on its top-right edge */
-.robo-fallback + .dock-voice{top:-12px;right:-12px;width:28px;height:28px}
+.robo-fallback + .dock-voice{top:-12px;right:-12px;width:32px;height:32px}
 
 /* Experience: organisation logo beside each role */
 .job-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;align-items:start}
@@ -639,3 +639,8 @@ a.cert-row:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* the chat panel takes focus when it opens; keyboard users get a visible ring, mouse users don't */
 .chat:focus{outline:none}
 .chat:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* Bigger tap areas for the footer's text links, without changing how they look */
+.foot-col > a,.foot-col > button.foot-link{padding-block:9px;margin-block:-5px}
+.foot-row a{display:inline-block;padding-block:12px;margin-block:-12px}
+.foot-brand .logo{padding-block:6px;margin-block:-6px}
