@@ -136,16 +136,19 @@ const SPOTS = [
   ['top', '#top'],
 ];
 
-// Which part of the page (or which project card) sits in the middle of the screen right now
+// Which part of the page (or which project card) is at the middle of the screen right now.
+// The part containing the middle line wins; otherwise the nearest one, so thin parts (like the
+// stats strip) and the gaps between sections still count.
+const NEAR = 220; // px from the middle line a part may be and still count
 function currentSpot() {
   if (document.getElementById('intro')) return null;
   const mid = innerHeight * 0.45;
-  const inMid = (el) => {
+  const dist = (el) => {
     const r = el.getBoundingClientRect();
-    return r.top < mid && r.bottom > mid;
+    return r.top > mid ? r.top - mid : r.bottom < mid ? mid - r.bottom : 0;
   };
   const work = document.getElementById('work');
-  if (work && inMid(work)) {
+  if (work && dist(work) === 0) {
     // Project cards stack on top of each other; the newest one past the middle is on top
     let cur = -1;
     work.querySelectorAll('article.sheet').forEach((c, i) => {
@@ -153,11 +156,20 @@ function currentSpot() {
     });
     return cur >= 0 && projects[cur] ? `project:${projects[cur].id}` : null;
   }
+  let best = null;
+  let bestD = NEAR;
   for (const [key, sel] of SPOTS) {
     const el = document.querySelector(sel);
-    if (el && inMid(el)) return key;
+    if (!el) continue;
+    const d = dist(el);
+    if (d < bestD) {
+      best = key; // ties keep the earlier, more specific part (hire form before the whole contact section)
+      bestD = d;
+    }
   }
-  return null;
+  // Between the hero and the projects, don't let a section far below win over the project stack
+  if (best && work && dist(work) < bestD) return null;
+  return best;
 }
 
 function tourLine(spot) {
