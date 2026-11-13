@@ -47,10 +47,13 @@ function guessLang(text) {
   return best;
 }
 
-// Robo's voice: the browser's built-in voices, pitched up for a small, friendly robot.
-// Voices differ per device, so try well-known bright-sounding ones first, then any voice in that language.
-const ROBO_PITCH = 1.4;
-const ROBO_RATE = 1.06;
+// Xiao Hei's voice. English (and the other languages MeloTTS speaks) uses the AI voice from
+// /api/tts, nudged a little higher and faster so it sounds small and friendly without distortion.
+// Other languages, or when the AI voice is unavailable, use the browser's built-in voice.
+const AI_VOICE_LANGS = new Set(['en', 'es', 'fr', 'zh', 'ja', 'ko']);
+const AI_VOICE_RATE = 1.07; // played without pitch correction, so this also lifts the pitch slightly
+const ROBO_PITCH = 1.12; // browser voices distort when pushed much higher
+const ROBO_RATE = 1.03;
 const PREFERRED_VOICES = {
   en: ['Google US English', 'Samantha', 'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Ana', 'Microsoft Zira', 'Karen', 'Tessa', 'Moira'],
   id: ['Google Bahasa Indonesia', 'Damayanti', 'Microsoft Gadis'],
@@ -71,15 +74,36 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
   loadVoices();
   speechSynthesis.addEventListener?.('voiceschanged', loadVoices);
 }
+// One shared audio element plays the AI voice. iPhones only let a page play sound from an element
+// that was started during a tap, so it's "unlocked" with a moment of silence on the first tap or key press.
+const SILENT_MP3 = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAlgAenp6enp6enp6enp6enp6enp6enp6enp6pqampqampqampqampqampqampqampqamptPT09PT09PT09PT09PT09PT09PT09PT09P/////////////////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQCcQAAAAAAAAJY+/rsqgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+const voiceEl = typeof Audio !== 'undefined' ? new Audio() : null;
+if (voiceEl && typeof window !== 'undefined') {
+  const unlock = () => {
+    removeEventListener('pointerdown', unlock, true);
+    removeEventListener('keydown', unlock, true);
+    if (voiceEl.src) return; // already playing a real line
+    voiceEl.src = SILENT_MP3;
+    voiceEl.play().then(() => voiceEl.pause(), () => {});
+  };
+  addEventListener('pointerdown', unlock, true);
+  addEventListener('keydown', unlock, true);
+}
+
+const NATURAL = /natural|neural|premium|enhanced/i; // the high-quality voices Edge, Windows and iOS ship
 function pickVoice(lang) {
   if (!voiceCache.length) loadVoices();
   const code = lang.slice(0, 2);
   const inLang = voiceCache.filter((v) => v.lang.toLowerCase().replace('_', '-').startsWith(code));
-  for (const name of PREFERRED_VOICES[code] || []) {
-    const v = inLang.find((x) => x.name.startsWith(name));
-    if (v) return v;
-  }
-  return inLang.find((v) => v.lang.replace('_', '-') === lang) || inLang[0] || null;
+  const byName = (list) => {
+    for (const name of PREFERRED_VOICES[code] || []) {
+      const v = list.find((x) => x.name.startsWith(name));
+      if (v) return v;
+    }
+    return null;
+  };
+  const natural = inLang.filter((v) => NATURAL.test(v.name));
+  return byName(natural) || natural[0] || byName(inLang) || inLang.find((v) => v.lang.replace('_', '-') === lang) || inLang[0] || null;
 }
 
 // Chrome's built-in Google voices stop after about 15 seconds without saying they've finished,
@@ -330,11 +354,24 @@ const Robo = forwardRef(function Robo(_, ref) {
     };
   }, [bot]);
 
+  const audioRef = useRef(null);
+  const stopAudio = useCallback(() => {
+    const a = audioRef.current;
+    audioRef.current = null;
+    if (!a) return;
+    a.onended = a.onerror = a.ontimeupdate = a.onplaying = null;
+    try {
+      a.pause();
+    } catch {
+      /* already stopped */
+    }
+  }, []);
   const stop = useCallback(() => {
     clearInterval(timer.current);
     bot.talking = false;
+    stopAudio();
     try { speechSynthesis.cancel(); } catch { /* not supported */ }
-  }, [bot]);
+  }, [bot, stopAudio]);
 
   const toggleVoice = () => {
     const next = !voiceOn;
@@ -364,6 +401,7 @@ const Robo = forwardRef(function Robo(_, ref) {
   // Speak a line with word-by-word highlight
   const sayId = useRef(0);
   const talkWatchdog = useRef(0);
+  const aiVoiceDown = useRef(false);
   const say = useCallback(
     (line, opts = {}) => {
       stop();
@@ -392,41 +430,116 @@ const Robo = forwardRef(function Robo(_, ref) {
         setIdx(n);
         act('nod');
       };
-      let gotBoundary = false;
+      let gotBoundary = false; // true once real timing (speech events or audio position) drives the highlight
       let voiced = false;
       if (voiceOn) {
-        try {
-          if ('speechSynthesis' in window) {
-            const lang = guessLang(line);
-            const voice = pickVoice(lang);
-            const chunks = speechChunks(line);
-            let k = 0;
-            const speakNext = () => {
+        const lang = guessLang(line);
+        const code = lang.slice(0, 2);
+        const chunks = speechChunks(line);
+        const highlightAt = (pos) => {
+          const before = line.slice(0, pos).trim();
+          setIdx(before ? before.split(' ').length : 0);
+        };
+
+        // The browser's own voice, from chunk k onward
+        const speakBrowser = (k) => {
+          if (id !== sayId.current) return;
+          if (!('speechSynthesis' in window)) return finish();
+          const voice = pickVoice(lang);
+          const next = () => {
+            if (id !== sayId.current) return;
+            if (k >= chunks.length) return finish();
+            const c = chunks[k++];
+            const u = new SpeechSynthesisUtterance(c.text);
+            u.lang = lang;
+            u.rate = ROBO_RATE;
+            u.pitch = ROBO_PITCH;
+            if (voice) u.voice = voice;
+            u.onboundary = (e) => {
               if (id !== sayId.current) return;
-              if (k >= chunks.length) return finish();
-              const c = chunks[k++];
-              const u = new SpeechSynthesisUtterance(c.text);
-              u.lang = lang;
-              u.rate = ROBO_RATE;
-              u.pitch = ROBO_PITCH;
-              if (voice) u.voice = voice;
-              u.onboundary = (e) => {
-                if (id !== sayId.current) return;
-                if (e.name && e.name !== 'word') return;
-                gotBoundary = true;
-                const before = line.slice(0, c.start + e.charIndex).trim();
-                setIdx(before ? before.split(' ').length : 0);
-              };
-              u.onend = speakNext;
-              u.onerror = finish;
-              speechSynthesis.speak(u);
+              if (e.name && e.name !== 'word') return;
+              gotBoundary = true;
+              highlightAt(c.start + e.charIndex);
             };
-            speakNext();
-            voiced = true;
-            // Safety net: some browsers never report the end of speech; don't stay "talking" forever
-            clearTimeout(talkWatchdog.current);
-            talkWatchdog.current = setTimeout(finish, (n * 0.45 + 3) * 1000);
-          }
+            u.onend = next;
+            u.onerror = finish;
+            speechSynthesis.speak(u);
+          };
+          next();
+        };
+
+        // The AI voice: one short MP3 per sentence, the next one downloading while this one plays
+        const speakAI = () => {
+          const src = (c) => `/api/tts?lang=${code}&text=${encodeURIComponent(c.text.trim())}`;
+          const prefetch = (c) => {
+            const p = new Audio();
+            p.preload = 'auto';
+            p.src = src(c);
+            return p; // only downloads; the shared element plays it from the browser cache
+          };
+          let switched = false;
+          const toBrowser = (from) => {
+            if (switched || id !== sayId.current) return; // an error and a failed play() can both report one failure
+            switched = true;
+            aiVoiceDown.current = true; // stay with the browser voice for the rest of this visit
+            stopAudio();
+            speakBrowser(from);
+          };
+          const a = voiceEl;
+          let k = 0;
+          // Held so the next sentence's download isn't dropped while the current one plays
+          let upcoming = chunks.length > 1 ? prefetch(chunks[1]) : null;
+          const next = () => {
+            if (id !== sayId.current) return;
+            if (k >= chunks.length) return finish();
+            const at = k;
+            const c = chunks[k++];
+            if (k > 1 && k < chunks.length) upcoming = prefetch(chunks[k]);
+            audioRef.current = a;
+            a.src = src(c);
+            a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = false;
+            a.defaultPlaybackRate = a.playbackRate = AI_VOICE_RATE;
+            // Too slow to arrive (weak connection): don't keep the visitor waiting in silence.
+            // (a.paused is already false while it's still loading, so track the real start.)
+            let started = false;
+            const slow = setTimeout(() => {
+              if (!started && audioRef.current === a) toBrowser(at);
+            }, 6000);
+            a.onplaying = () => {
+              started = true;
+              clearTimeout(slow);
+            };
+            a.ontimeupdate = () => {
+              if (id !== sayId.current || !a.duration || !isFinite(a.duration)) return;
+              gotBoundary = true;
+              highlightAt(c.start + Math.floor((c.text.length * a.currentTime) / a.duration));
+            };
+            a.onended = () => {
+              clearTimeout(slow);
+              next();
+            };
+            a.onerror = () => {
+              clearTimeout(slow);
+              toBrowser(at);
+            };
+            a.play().catch((err) => {
+              clearTimeout(slow);
+              if (id !== sayId.current) return;
+              // Not allowed yet (no click on the page so far): show the text without sound
+              if (err?.name === 'NotAllowedError') return finish();
+              if (err?.name !== 'AbortError') toBrowser(at);
+            });
+          };
+          next();
+        };
+
+        try {
+          if (voiceEl && AI_VOICE_LANGS.has(code) && !aiVoiceDown.current) speakAI();
+          else speakBrowser(0);
+          voiced = true;
+          // Safety net: if the end of speech is never reported, don't stay "talking" forever
+          clearTimeout(talkWatchdog.current);
+          talkWatchdog.current = setTimeout(finish, (n * 0.5 + 8) * 1000);
         } catch {
           voiced = false;
         }
@@ -443,7 +556,7 @@ const Robo = forwardRef(function Robo(_, ref) {
         setIdx(i);
       }, 330);
     },
-    [act, bot, stop, voiceOn]
+    [act, bot, stop, stopAudio, voiceOn]
   );
 
   useImperativeHandle(ref, () => ({

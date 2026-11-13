@@ -1,9 +1,10 @@
-// Cloudflare Worker entry: serves the built site from /dist plus two small APIs.
+// Cloudflare Worker entry: serves the built site from /dist plus a few small APIs.
 // Static files are served automatically; requests that don't match a file come here.
 
 import { EmailMessage } from 'cloudflare:email';
 import * as chat from '../functions/api/chat.js';
 import * as contact from '../functions/api/contact.js';
+import * as tts from '../functions/api/tts.js';
 
 // Runtime-only modules the API handlers need (passed in so the handlers stay testable)
 const DEPS = { EmailMessage };
@@ -11,17 +12,18 @@ const DEPS = { EmailMessage };
 const ROUTES = {
   '/api/chat': chat,
   '/api/contact': contact,
+  '/api/tts': tts,
 };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const route = ROUTES[url.pathname];
 
     if (route) {
       try {
         if (request.method === 'POST' && route.onRequestPost) return await route.onRequestPost({ request, env }, DEPS);
-        if (request.method === 'GET' && route.onRequestGet) return route.onRequestGet();
+        if (request.method === 'GET' && route.onRequestGet) return await route.onRequestGet({ request, env, ctx });
         return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
       } catch (err) {
         // Any unexpected failure still returns JSON the page knows how to handle
